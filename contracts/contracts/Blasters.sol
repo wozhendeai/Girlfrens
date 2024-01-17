@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
-contract BlastersNFT is ERC721, Ownable {
+contract GirlfrenNFT is ERC721, Ownable {
     // Constants
     /**
      * @dev The starting `tokenId`.
@@ -15,7 +15,7 @@ contract BlastersNFT is ERC721, Ownable {
     uint256 public constant START_TOKEN_ID = 1;
 
     /**
-     * @dev The max supply of Blasters.
+     * @dev The max supply of Girlfren.
      */
     uint256 public constant MAX_SUPPLY = 10000;
 
@@ -26,14 +26,14 @@ contract BlastersNFT is ERC721, Ownable {
     string internal __baseURI;
 
     /**
-     * @dev The Blaster auction contract.
+     * @dev The Girlfren auction contract.
      */
-    address internal _minter;
+    address internal _girlfrenAuction;
 
     /**
-     * @dev The Blaster treasury contract.
+     * @dev The Girlfren treasury contract.
      */
-    address internal _blasterTreasury;
+    address internal _girlfrenTreasury;
 
     /**
      * @dev The next `tokenId` to be minted.
@@ -41,7 +41,7 @@ contract BlastersNFT is ERC721, Ownable {
     uint32 public nextTokenId;
 
     /**
-     * @dev Total number of Blasters redeemed (burned).
+     * @dev Total number of Girlfren redeemed (burned).
      */
     uint32 public totalRedeemed;
 
@@ -56,16 +56,16 @@ contract BlastersNFT is ERC721, Ownable {
     bool public mintLocked;
 
     /**
-     * @dev Mapping of `tokenId` to shares (amount of vault shares stored in each Blaster).
+     * @dev Mapping of `tokenId` to shares (amount of vault shares stored in each Girlfren).
      */
     mapping(uint256 => uint256) private _vaultShares;
 
     // Constructor
     constructor(
-        address blasterTreasury
-    ) ERC721("Blasters", "BLSTR") Ownable(msg.sender) {
+        address girlfrenTreasury
+    ) ERC721("Girlfren", "GF") Ownable(msg.sender) {
         nextTokenId = uint32(START_TOKEN_ID);
-        _blasterTreasury = blasterTreasury;
+        _girlfrenTreasury = girlfrenTreasury;
     }
 
     // Public Functions
@@ -83,19 +83,19 @@ contract BlastersNFT is ERC721, Ownable {
     /**
      * @dev Returns the amount of vault shares stored in `tokenId`.
      */
-    function getBlasterShares(uint256 tokenId) public view returns (uint256) {
+    function getGirlfrenhares(uint256 tokenId) public view returns (uint256) {
         return _vaultShares[tokenId];
     }
 
     /**
-     * @dev Returns the total number of Blasters minted.
+     * @dev Returns the total number of Girlfren minted.
      */
     function totalMinted() external view returns (uint256) {
         return nextTokenId - START_TOKEN_ID;
     }
 
     /**
-     * @dev Returns the total number of Blasters in existence.
+     * @dev Returns the total number of Girlfren in existence.
      */
     function totalSupply() external view returns (uint256) {
         return nextTokenId - START_TOKEN_ID - totalRedeemed;
@@ -141,9 +141,9 @@ contract BlastersNFT is ERC721, Ownable {
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     /**
-     * @dev Allows a Blaster holder to burn a Blaster, and redeem the shares inside it.
+     * @dev Allows a Girlfren holder to burn a Girlfren, and redeem the shares inside it.
      */
-    function redeemBlaster(uint256 tokenId) external {
+    function redeemGirlfren(uint256 tokenId) external {
         ++totalRedeemed;
 
         // Get the amount of vault shares a NFT contains
@@ -151,18 +151,20 @@ contract BlastersNFT is ERC721, Ownable {
 
         require(
             ownerOf(tokenId) == msg.sender,
-            "Must own Blaster to redeem it."
+            "Must own Girlfren to redeem it."
         );
 
         // Burn the NFT before transferring the shares
         _burn(tokenId);
 
         // We can free the storage for some gas refund. `tokenId` will only increase.
-        // We don't need to use the value again after the Blaster has been redeemed.
+        // We don't need to use the value again after the Girlfren has been redeemed.
         delete _vaultShares[tokenId];
 
+        IGirlfrenAuction(_girlfrenAuction).emitBonklerRedeemedEvent(tokenId);
+
         // Transfer the vault shares to the user
-        IBlasterTreasury(_blasterTreasury).withdrawAssets(msg.sender, shares);
+        IGirlfrenTreasury(_girlfrenTreasury).withdrawAssets(msg.sender, shares);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -174,37 +176,36 @@ contract BlastersNFT is ERC721, Ownable {
      * while accepting a ETH deposit to be stored inside the Bonkler,
      * to be redeemed if it is burned.
      */
-    function transferPurchasedBonkler(
+    function transferPurchasedGirlfren(
         uint256 tokenId,
         address to
-    ) external payable onlyMinter {
+    ) external payable onlyGirlfrenAuction() {
         // Check current balance of shares before deposit
-        uint256 initialShares = IERC20(_blasterTreasury).balanceOf(
+        uint256 initialShares = IERC20(_girlfrenTreasury).balanceOf(
             address(this)
         );
 
         // Deposit ETH to vault
-        IBlasterTreasury(_blasterTreasury).depositAssets(
+        IGirlfrenTreasury(_girlfrenTreasury).depositAssets(
             address(this),
             msg.value
         );
 
         // Check new balance of shares after deposit
-        uint256 newShares = IERC20(_blasterTreasury).balanceOf(address(this));
+        uint256 newShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
 
         // Calculate number of shares issued for this deposit
         uint256 sharesIssued = newShares - initialShares;
-        
-        
+
         _vaultShares[tokenId] = sharesIssued;
 
         _transfer(msg.sender, to, tokenId);
     }
 
     /**
-     * @dev Allows the minting of a Blaster
+     * @dev Allows the minting of a Girlfren
      */
-    function mint() external payable onlyMinter returns (uint256 tokenId) {
+    function mint() external payable onlyGirlfrenAuction returns (uint256 tokenId) {
         require(nextTokenId <= MAX_SUPPLY, "Public sale has ended");
 
         // Increment and mint the NFT
@@ -219,9 +220,9 @@ contract BlastersNFT is ERC721, Ownable {
     /**
      * @dev Sets the minter.
      */
-    function setMinter(address minter) external onlyOwner {
+    function setGirlfrenAuction(address minter) external onlyOwner {
         require(!minterLocked, "Locked.");
-        _minter = minter;
+        _girlfrenAuction = minter;
     }
 
     /**
@@ -260,13 +261,17 @@ contract BlastersNFT is ERC721, Ownable {
     /**
      * @dev Guards a function such that only the minter is authorized to call it.
      */
-    modifier onlyMinter() virtual {
-        require(msg.sender == _minter, "Unauthorized minter.");
+    modifier onlyGirlfrenAuction() virtual {
+        require(msg.sender == _girlfrenAuction, "Unauthorized minter.");
         _;
     }
 }
 
-interface IBlasterTreasury {
+interface IGirlfrenAuction {
+    function emitBonklerRedeemedEvent(uint256 bonklerId) external payable;
+}
+
+interface IGirlfrenTreasury {
     function depositAssets(address receiver, uint256 assets) external payable;
 
     function withdrawAssets(address receiver, uint256 assets) external payable;
