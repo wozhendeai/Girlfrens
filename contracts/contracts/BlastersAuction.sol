@@ -144,7 +144,7 @@ contract GirlfrenAuction is OwnableUpgradeable {
         );
         require(_auctionData.girlfrensNFT == address(0), "Already initialized.");
 
-        __Ownable_init();
+        __Ownable_init(msg.sender);
 
         _checkReservePercentage(reservePercentage);
         _checkReservePrice(reservePrice);
@@ -302,36 +302,6 @@ contract GirlfrenAuction is OwnableUpgradeable {
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     /**
-     * @dev Appends an array of generation hashes.
-     */
-    function addGenerationHashHashes(
-        uint256[] calldata values
-    ) external onlyOwner {
-        uint256 o = _auctionData.generationHashesLength;
-        for (uint256 i; i != values.length; ++i) {
-            _generationHashHashes[++o] = values[i];
-        }
-        _auctionData.generationHashesLength = uint24(o);
-    }
-
-    /**
-     * @dev Update the generation hashes.
-     * Each index in `indices` must be less than `generationHashesLength`.
-     */
-    function setGenerationHashHashes(
-        uint256[] calldata indices,
-        uint256[] calldata values
-    ) external onlyOwner {
-        require(indices.length == values.length, "Array lengths mismatch.");
-        uint256 o = _auctionData.generationHashesLength;
-        for (uint256 i; i != values.length; ++i) {
-            uint256 j = indices[i];
-            require(j != 0 && j <= o, "Array out of bounds access.");
-            _generationHashHashes[j] = values[i];
-        }
-    }
-
-    /**
      * @dev Set the auction reserve price.
      */
     function setReservePrice(uint96 reservePrice) external onlyOwner {
@@ -462,10 +432,6 @@ contract GirlfrenAuction is OwnableUpgradeable {
         _auctionData.endTime = SafeCastLib.toUint40(endTime);
         _auctionData.girlfrenId = SafeCastLib.toUint24(girlfrenId);
         _auctionData.settled = false;
-
-        // We can free the storage for some gas refund. `girlfrenId` will only increase.
-        // We don't need to use the value again after the Girlfren has been minted.
-        delete _generationHashHashes[girlfrenId];
 
         emit AuctionCreated(girlfrenId, block.timestamp, endTime);
 
