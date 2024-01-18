@@ -73,7 +73,7 @@ abstract contract GirlfrenTreasury is ERC4626, Ownable {
     function depositAssets(address receiver, uint256 assets) public onlyGirlfrensNFT {
         uint256 shares = previewDeposit(assets);
         _deposit(msg.sender, receiver, assets, shares);
-
+        
         // Deposit into strategy
         ITreasuryStrategy(_treasuryStrategy).deposit();
     }
@@ -125,7 +125,7 @@ abstract contract GirlfrenTreasury is ERC4626, Ownable {
     /**
      * @dev Allows the current girlfen NFT contract to change address
      */
-    function setBlastersNFTAddress (address girlfrensNFT) public onlyGirlfrensNFT {
+    function setGirlfrensNFTAddress (address girlfrensNFT) public onlyGirlfrensNFT {
         _girlfrensNFT = girlfrensNFT;
     }
 }

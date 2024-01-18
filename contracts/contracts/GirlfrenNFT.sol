@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 
-contract GirlfrenNFT is ERC721, Ownable {
+contract Girlfren is ERC721, Ownable {
     // Constants
     /**
      * @dev The starting `tokenId`.
@@ -18,6 +18,12 @@ contract GirlfrenNFT is ERC721, Ownable {
      * @dev The max supply of Girlfren.
      */
     uint256 public constant MAX_SUPPLY = 10000;
+
+    /**
+     * @dev Blast rebasing WETH contract address
+     */
+    address public constant WETH_ADDRESS =
+        0x4200000000000000000000000000000000000023;
 
     // Storage
     /**
@@ -61,11 +67,8 @@ contract GirlfrenNFT is ERC721, Ownable {
     mapping(uint256 => uint256) private _vaultShares;
 
     // Constructor
-    constructor(
-        address girlfrenTreasury
-    ) ERC721("Girlfren", "GF") Ownable(msg.sender) {
+    constructor() ERC721("Girlfren", "GF") Ownable(msg.sender) {
         nextTokenId = uint32(START_TOKEN_ID);
-        _girlfrenTreasury = girlfrenTreasury;
     }
 
     // Public Functions
@@ -83,7 +86,7 @@ contract GirlfrenNFT is ERC721, Ownable {
     /**
      * @dev Returns the amount of vault shares stored in `tokenId`.
      */
-    function getGirlfrenhares(uint256 tokenId) public view returns (uint256) {
+    function getGirlfrenShares(uint256 tokenId) public view returns (uint256) {
         return _vaultShares[tokenId];
     }
 
@@ -179,11 +182,17 @@ contract GirlfrenNFT is ERC721, Ownable {
     function transferPurchasedGirlfren(
         uint256 tokenId,
         address to
-    ) external payable onlyGirlfrenAuction() {
+    ) external payable onlyGirlfrenAuction {
         // Check current balance of shares before deposit
         uint256 initialShares = IERC20(_girlfrenTreasury).balanceOf(
             address(this)
         );
+
+        // Wrap ETH into WETH
+        IWETH(WETH_ADDRESS).deposit{value: msg.value}();
+
+        // Approve WETH for transfer
+        IWETH(WETH_ADDRESS).approve(_girlfrenTreasury, msg.value);
 
         // Deposit ETH to vault
         IGirlfrenTreasury(_girlfrenTreasury).depositAssets(
@@ -205,7 +214,12 @@ contract GirlfrenNFT is ERC721, Ownable {
     /**
      * @dev Allows the minting of a Girlfren
      */
-    function mint() external payable onlyGirlfrenAuction returns (uint256 tokenId) {
+    function mint()
+        external
+        payable
+        onlyGirlfrenAuction
+        returns (uint256 tokenId)
+    {
         require(nextTokenId <= MAX_SUPPLY, "Public sale has ended");
 
         // Increment and mint the NFT
@@ -223,6 +237,14 @@ contract GirlfrenNFT is ERC721, Ownable {
     function setGirlfrenAuction(address minter) external onlyOwner {
         require(!minterLocked, "Locked.");
         _girlfrenAuction = minter;
+    }
+
+    /**
+     * @dev Sets the minter.
+     */
+    function setGirlfrenTreasury(address girlfrenTreasury) external onlyOwner {
+        require(!minterLocked, "Locked.");
+        _girlfrenTreasury = girlfrenTreasury;
     }
 
     /**
@@ -277,4 +299,14 @@ interface IGirlfrenTreasury {
     function withdrawAssets(address receiver, uint256 assets) external payable;
 
     function transferShares(address to, uint256 amount) external;
+}
+
+interface IWETH {
+    function deposit() external payable;
+
+    function transfer(address to, uint value) external returns (bool);
+
+    function withdraw(uint) external;
+
+    function approve(address, uint) external returns (bool);
 }
