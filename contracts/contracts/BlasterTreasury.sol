@@ -6,42 +6,40 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "./TreasuryStrategy.sol";
 
-abstract contract BlasterTreasury is ERC4626, Ownable {
+abstract contract GirlfrenTreasury is ERC4626, Ownable {
     using Math for uint256;
 
     // Constants
+    /**
+     * @dev Timelock length on how long it will take to change current strategy
+     */
+    uint256 public constant STRATEGY_CHANGE_DELAY = 1 days;
 
     // Storage
     /**
      * @dev The address of the Blasters NFT
      */
-    address _blastersNFT;
+    address _girlfrensNFT;
     /**
      * @dev The current treasury vault strategy.
      */
-    // TODO: Change to address
-    TreasuryStrategy _treasuryStrategy;
-    // TODO: Add underscore to below address
+    address _treasuryStrategy;
     /**
      * @dev The proposed new strategy
      */
-    address public newStrategy;
+    address public _newStrategy;
     /**
      * @dev The block timestamp of when the strategy change was initiated
      */
     uint256 public strategyChangeInitiated;
-    /**
-     * @dev Timelock length on how long it will take to change current strategy
-     */
-    uint256 public constant STRATEGY_CHANGE_DELAY = 1 days;
 
     // Events
     event StrategyChangeInitiated(address indexed newStrategy, uint256 at);
     event StrategyChanged(address indexed newStrategy);
 
     // Modifier
-    modifier onlyBlastersNFT() {
-        require(msg.sender == _blastersNFT, "");
+    modifier onlyGirlfrensNFT() {
+        require(msg.sender == _girlfrensNFT, "Only Girlfrens NFT can deposit into vault");
         _;
     }
 
@@ -52,15 +50,15 @@ abstract contract BlasterTreasury is ERC4626, Ownable {
      */
     constructor(
         IERC20 asset,
-        address blastersNFT,
-        TreasuryStrategy treasuryStrategy
+        address girlfrensNFT,
+        address treasuryStrategy
     )
-        ERC20("BLASTERSHARES", "BLASTERSHARES")
+        ERC20("GFShares", "GFShares")
         ERC4626(asset)
         Ownable(msg.sender)
     {
         // The address of Blasters NFT
-        _blastersNFT = blastersNFT;
+        _girlfrensNFT = girlfrensNFT;
         // The initial treasury yield-bearing strategy we'll use
         _treasuryStrategy = treasuryStrategy;
     }
@@ -72,12 +70,12 @@ abstract contract BlasterTreasury is ERC4626, Ownable {
      * @param receiver The address that will receive the vault shares.
      * @param assets The amount of the underlying asset to deposit.
      */
-    function depositAssets(address receiver, uint256 assets) public onlyBlastersNFT {
+    function depositAssets(address receiver, uint256 assets) public onlyGirlfrensNFT {
         uint256 shares = previewDeposit(assets);
         _deposit(msg.sender, receiver, assets, shares);
 
         // Deposit into strategy
-        _treasuryStrategy.deposit();
+        ITreasuryStrategy(_treasuryStrategy).deposit();
     }
 
     /**
@@ -85,42 +83,54 @@ abstract contract BlasterTreasury is ERC4626, Ownable {
      * @param receiver The address that will receive the withdrawn assets.
      * @param assets The amount of assets to withdraw from the vault.
      */
-    function withdrawAssets(address receiver, uint256 assets) public onlyBlastersNFT {
+    function withdrawAssets(address receiver, uint256 assets) public onlyGirlfrensNFT {
         uint256 shares = previewWithdraw(assets);
         _withdraw(msg.sender, receiver, msg.sender, assets, shares);
 
         // Withdraw from strategy
-        _treasuryStrategy.withdraw();
+        ITreasuryStrategy(_treasuryStrategy).withdraw();
     }
 
     /**
      * @dev Initiates the process to change the treasury's strategy by setting a new proposed strategy. This change is subject to a delay for security.
-     * @param _newStrategy The contract address of the new strategy proposed for the treasury.
+     * @param newStrategy The contract address of the new strategy proposed for the treasury.
      */
-    function proposeStrategy(address _newStrategy) public onlyOwner {
-        require(_newStrategy != address(0), "Invalid strategy address");
-        newStrategy = _newStrategy;
+    function proposeStrategy(address newStrategy) public onlyOwner {
+        require(newStrategy != address(0), "Invalid strategy address");
+        _newStrategy = newStrategy;
         strategyChangeInitiated = block.timestamp;
 
-        emit StrategyChangeInitiated(newStrategy, strategyChangeInitiated);
+        emit StrategyChangeInitiated(_newStrategy, strategyChangeInitiated);
     }
 
     /**
      * @dev Executes the strategy change after the delay period has passed, updating the treasury's active strategy to the previously proposed strategy.
      */
     function executeStrategyChange() public onlyOwner {
-        require(newStrategy != address(0), "No strategy change initiated");
+        require(_newStrategy != address(0), "No strategy change initiated");
         require(
             block.timestamp >= strategyChangeInitiated + STRATEGY_CHANGE_DELAY,
             "Strategy change delay has not passed"
         );
 
         // Change strategy
-        _treasuryStrategy = TreasuryStrategy(newStrategy);
-        newStrategy = address(0);
+        _treasuryStrategy = _newStrategy;
+        _newStrategy = address(0);
 
         // TODO: Migrate funds from previous strategy to current
 
         emit StrategyChanged(address(_treasuryStrategy));
     }
+
+    /**
+     * @dev Allows the current girlfen NFT contract to change address
+     */
+    function setBlastersNFTAddress (address girlfrensNFT) public onlyGirlfrensNFT {
+        _girlfrensNFT = girlfrensNFT;
+    }
+}
+
+interface ITreasuryStrategy {
+    function withdraw() external;
+    function deposit() external;
 }
