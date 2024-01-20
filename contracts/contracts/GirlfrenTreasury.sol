@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import "./TreasuryStrategy.sol";
 
-abstract contract GirlfrenTreasury is ERC4626, Ownable {
+contract GirlfrenTreasury is ERC4626, Ownable {
     using Math for uint256;
 
     // Constants

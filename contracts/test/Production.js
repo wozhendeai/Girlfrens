@@ -1,30 +1,28 @@
 const hre = require("hardhat");
+const { parseEther, parseUnits, getSigners, getContractFactory, getContractAt }= require("hardhat").ethers;
 const { loadFixture, time, setBalance, mine, impersonateAccount } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
-const { log } = require("console");
-const ethers = hre.ethers;
 
 const WETH_ADDRESS = "0x4200000000000000000000000000000000000023";
 
 async function deployFixture() {
-  const [dev, bidder1, bidder2] = await ethers.getSigners();
+  const [dev, bidder1, bidder2] = await getSigners();
 
-  const WETH = await ethers.getContractFactory("WETHRebasing");
-  const weth = WETH.attach(
-    WETH_ADDRESS
-  );
+  // Get deployed contract
+  const WETH = await getContractAt("WETH", WETH_ADDRESS);
+  const WETHAddress = WETH.getAddress();
 
   // TreasuryStrategy deployment
   // This contract requires no dependancies
-  const TreasuryStrategyFactory = await ethers.getContractFactory("TreasuryStrategy")
+  const TreasuryStrategyFactory = await getContractFactory("TreasuryStrategy")
   const treasuryStrategy = await TreasuryStrategyFactory.connect(dev).deploy();
   await treasuryStrategy.waitForDeployment();
   const treasuryStrategyAddress = await treasuryStrategy.getAddress();
 
   // Deploy BlasterTreasury
-  const GirlfrenTreasuryFactory = await ethers.getContractFactory("GirlfrenTreasury")
+  const GirlfrenTreasuryFactory = await getContractFactory("GirlfrenTreasury")
   const gfTreasury = await GirlfrenTreasuryFactory.connect(dev).deploy(
-    weth, // The underlying asset in vaults is WETH Rebasing
+    WETHAddress, // The underlying asset in vaults is WETH Rebasing
     dev, // Temporarily set NFT contract address as developer
     treasuryStrategyAddress // Set our initial treasury strategy
   );
@@ -32,13 +30,13 @@ async function deployFixture() {
   const gfTreasuryAddress = await gfTreasury.getAddress();
 
   // Deploy Girlfren Auction
-  const GirlfrenAuctionFactory = await ethers.getContractFactory("GirlfrenAuction");
+  const GirlfrenAuctionFactory = await getContractFactory("GirlfrenAuction");
   const gfAuction = await GirlfrenAuctionFactory.connect(dev).deploy();
-  await gfAuction.deployed();
+  await gfAuction.waitForDeployment();
   const gfAuctionAddress = await gfAuction.getAddress();
 
   // Deploy GirlfrenNFT
-  const GirlfrenNFTFactory = await ethers.getContractFactory("Girlfren")
+  const GirlfrenNFTFactory = await getContractFactory("Girlfren")
   const gfNFT = await GirlfrenNFTFactory.connect(dev).deploy();
   await gfNFT.waitForDeployment();
   const gfNFTAddress = await gfNFT.getAddress();
@@ -49,12 +47,12 @@ async function deployFixture() {
   // Update Girlfren Treasury to use correct NFT address
   await gfTreasury.connect(dev).setGirlfrensNFTAddress(gfNFTAddress);
 
-  return { dev, bidder1, bidder2, weth, gfTreasury, gfNFT, gfNFTAddress, gfAuction };
+  return { dev, bidder1, bidder2, WETH, gfTreasury, gfNFT, gfNFTAddress, gfAuction };
 }
 
-async function getDefaultAuctionData() {
-  const reservePrice = ethers.parseEther("1"); // Example value
-  const bidIncrement = ethers.parseEther("0.01"); // Example value
+function getDefaultAuctionData() {
+  const reservePrice = BigInt(parseEther("1") ); // Example value
+  const bidIncrement = BigInt(parseEther("0.01")); // Example value
   const duration = 86400; // 1 day in seconds
   const timeBuffer = 300; // 5 minutes in seconds
   const reservePercentage = 10; // 10%
@@ -65,23 +63,27 @@ async function getDefaultAuctionData() {
 describe("Integration Test", function () {
 
   beforeEach(async function () {
-    this.fixture = await loadFixture(deployFixture);
-    const { gfAuction, gfNFTAddress, dev } = this.fixture;
-
-    // Initialize GirlfrenAuction
-    const { reservePrice, bidIncrement, duration, timeBuffer, reservePercentage } = getDefaultAuctionData();
-
-    await gfAuction.connect(dev).initialize(
-      gfNFTAddress,
-      reservePrice,
-      bidIncrement,
-      duration,
-      timeBuffer,
-      reservePercentage
-    );
-
+    try {
+      this.fixture = await loadFixture(deployFixture);
+      const { gfAuction, gfNFTAddress, dev } = this.fixture;
+  
+      // Initialize GirlfrenAuction
+      const { reservePrice, bidIncrement, duration, timeBuffer, reservePercentage } = getDefaultAuctionData();
+    
+      await gfAuction.connect(dev).initialize(
+        gfNFTAddress,
+        reservePrice,
+        bidIncrement,
+        duration,
+        timeBuffer,
+        reservePercentage
+      );
+    } catch (error) {
+      console.error("Error in beforeEach hook:", error);
+      throw error; // Re-throw the error to make sure the test fails
+    }
   });
-
+  
   it("Should have correct initialization parameters", async function () {
     const { gfAuction, gfNFTAddress } = this.fixture;
 

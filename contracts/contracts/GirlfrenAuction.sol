@@ -2,7 +2,7 @@
 // forked from REMILIA COLLECTIVE
 // ETYMOLOGY: Zora Auction House -> Noun Auction House -> Girlfren Auction
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.4;
 
 import "solady/src/utils/SafeTransferLib.sol";
 import "solady/src/utils/SafeCastLib.sol";
@@ -284,7 +284,7 @@ contract GirlfrenAuction is OwnableUpgradeable {
      * @dev Settles the auction.
      * This method may be called by anyone if there are no bids to trigger
      * settling the ended auction, or to settle the last auction,
-     * when all the generation hash hashes have been used.
+     * when girlfrens has reached max supply.
      */
     function settleAuction() external {
         require(
