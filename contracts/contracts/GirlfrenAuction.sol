@@ -103,12 +103,6 @@ contract GirlfrenAuction is OwnableUpgradeable {
     AuctionData internal _auctionData;
 
     /**
-     * @dev The amount of auctions possible
-     * TODO: Get value from Blasters MAX_SUPPLY
-     */
-    uint256 public constant MAX_SUPPLY = 1000;
-
-    /**
      * @dev The address that deployed the contract.
      */
     address internal immutable _deployer;
@@ -142,7 +136,10 @@ contract GirlfrenAuction is OwnableUpgradeable {
             girlfrensNFT != address(0),
             "Girlfrens must not be the zero address."
         );
-        require(_auctionData.girlfrensNFT == address(0), "Already initialized.");
+        require(
+            _auctionData.girlfrensNFT == address(0),
+            "Already initialized."
+        );
 
         __Ownable_init(msg.sender);
 
@@ -174,7 +171,8 @@ contract GirlfrenAuction is OwnableUpgradeable {
         data = _auctionData;
         // Load some extra data regarding the Girlfrens NFT contract.
         data.girlfrenBalance = address(data.girlfrensNFT).balance;
-        data.girlfrensTotalRedeemed = IGirlfrenNFT(data.girlfrensNFT).totalRedeemed();
+        data.girlfrensTotalRedeemed = IGirlfrenNFT(data.girlfrensNFT)
+            .totalRedeemed();
     }
 
     /**
@@ -195,10 +193,7 @@ contract GirlfrenAuction is OwnableUpgradeable {
      * The frontend should pass in the next `girlfrenId` and the next `generationHash`
      * when the auction has ended.
      */
-    function createBid(
-        uint256 girlfrenId,
-        uint256 generationHash
-    ) external payable {
+    function createBid(uint256 girlfrenId) external payable {
         // To prevent gas under-estimation.
         require(gasleft() > 150000);
 
@@ -208,16 +203,16 @@ contract GirlfrenAuction is OwnableUpgradeable {
         if (_auctionData.startTime == 0) {
             // If the first auction has not been created,
             // try to create a new auction.
-            creationFailed = !_createAuction(generationHash);
+            creationFailed = !_createAuction();
         } else if (hasEnded()) {
             if (_auctionData.settled) {
                 // If the auction has ended, and is settled, try to create a new auction.
-                creationFailed = !_createAuction(generationHash);
+                creationFailed = !_createAuction();
             } else {
                 // Otherwise, if the auction has ended, but is yet been settled, settle it.
                 _settleAuction();
                 // After settling the auction, try to create a new auction.
-                if (!_createAuction(generationHash)) {
+                if (!_createAuction()) {
                     // If the creation fails, it means that we have ran out of generation hashes.
                     // In this case, refund all the ETH sent and early return.
                     SafeTransferLib.forceSafeTransferETH(msg.sender, msg.value);
@@ -241,7 +236,10 @@ contract GirlfrenAuction is OwnableUpgradeable {
         // - A bidder bids for the next auction due to frontend being ahead of time,
         //   but the current auction gets extended,
         //   and the bid gets accepted for the current auction.
-        require(girlfrenId == _auctionData.girlfrenId, "Bid for wrong Girlfren.");
+        require(
+            girlfrenId == _auctionData.girlfrenId,
+            "Bid for wrong Girlfren."
+        );
 
         if (amount == 0) {
             require(
@@ -361,7 +359,9 @@ contract GirlfrenAuction is OwnableUpgradeable {
     function emitGirlfrenRedeemedEvent(uint256 girlfrenId) external payable {
         // The caller can only be either the Girlfrens contract,
         // TODO: [remove] or the owner of this contract (for testing purposes).
-        require(msg.sender == _auctionData.girlfrensNFT || msg.sender == owner());
+        require(
+            msg.sender == _auctionData.girlfrensNFT || msg.sender == owner()
+        );
         emit GirlfrenRedeemed(girlfrenId);
     }
 
@@ -411,7 +411,7 @@ contract GirlfrenAuction is OwnableUpgradeable {
      * and emits an `AuctionCreated` event.
      * Returns whether the auction has been created successfully.
      */
-    function _createAuction(uint256 generationHash) internal returns (bool) {
+    function _createAuction() internal returns (bool) {
         // This is the index into the `generationHashHashes`.
         // If there is no auction, its value is 0.
         // Otherwise, its value is the next `girlfrenId`.
@@ -419,10 +419,13 @@ contract GirlfrenAuction is OwnableUpgradeable {
 
         // If we have reached the tokens max supply,
         // we cannot create a new auction.
-        require(girlfrenId > MAX_SUPPLY, "No more auctions, reached max supply.");
+        require(
+            girlfrenId > IGirlfrenNFT(_auctionData.girlfrensNFT).maxSupply(),
+            "No more auctions, reached max supply."
+        );
 
         // Mint the Girlfren.
-        girlfrenId = IGirlfrenNFT(_auctionData.girlfrensNFT).mint(generationHash);
+        girlfrenId = IGirlfrenNFT(_auctionData.girlfrensNFT).mint();
 
         uint256 endTime = block.timestamp + _auctionData.duration;
 
@@ -455,10 +458,9 @@ contract GirlfrenAuction is OwnableUpgradeable {
         withdrawable += amount - girlfrenShares;
 
         // Transfer the Girlfren to the winner.
-        IGirlfrenNFT(girlfrensNFT).transferPurchasedGirlfren{value: girlfrenShares}(
-            girlfrenId,
-            bidder
-        );
+        IGirlfrenNFT(girlfrensNFT).transferPurchasedGirlfren{
+            value: girlfrenShares
+        }(girlfrenId, bidder);
 
         _auctionData.settled = true;
         _auctionData.withdrawable = SafeCastLib.toUint96(withdrawable);
@@ -509,12 +511,16 @@ interface IGirlfrenNFT {
     /**
      * @dev Allows the minter to mint a Girlfren to itself, with `generationHash`.
      */
-    function mint(
-        uint256 generationHash
-    ) external payable returns (uint256 tokenId);
+    function mint() external payable returns (uint256 tokenId);
 
     /**
      * @dev Total number of Girlfrens redeemed (burned).
      */
     function totalRedeemed() external view returns (uint32);
+        
+    /**
+     * @dev Returns the max total number of Girlfren 
+     */
+    function maxSupply() external view returns (uint256);
+
 }
