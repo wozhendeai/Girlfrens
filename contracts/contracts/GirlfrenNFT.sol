@@ -105,6 +105,13 @@ contract Girlfren is ERC721, Ownable {
     }
 
     /**
+     * @dev Returns the max total number of Girlfren 
+     */
+    function maxSupply() external view returns (uint256) {
+        return MAX_SUPPLY;
+    }
+
+    /**
      * @dev Returns if the `tokenId` exists.
      */
     function exists(uint256 tokenId) external view returns (bool) {
