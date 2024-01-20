@@ -6,6 +6,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "hardhat/console.sol";
 
 contract Girlfren is ERC721, Ownable {
     // Constants
@@ -17,13 +18,12 @@ contract Girlfren is ERC721, Ownable {
     /**
      * @dev The max supply of Girlfren.
      */
-    uint256 public constant MAX_SUPPLY = 10000;
+    uint256 public constant MAX_SUPPLY = 1000;
 
     /**
      * @dev Blast rebasing WETH contract address
      */
-    address public constant WETH_ADDRESS =
-        0x4200000000000000000000000000000000000023;
+    address public WETH_ADDRESS = 0x4200000000000000000000000000000000000023;
 
     // Storage
     /**
@@ -105,9 +105,9 @@ contract Girlfren is ERC721, Ownable {
     }
 
     /**
-     * @dev Returns the max total number of Girlfren 
+     * @dev Returns the max total number of Girlfren
      */
-    function maxSupply() external view returns (uint256) {
+    function maxSupply() external pure returns (uint256) {
         return MAX_SUPPLY;
     }
 
@@ -186,37 +186,34 @@ contract Girlfren is ERC721, Ownable {
      * while accepting a ETH deposit to be stored inside the Bonkler,
      * to be redeemed if it is burned.
      */
-    function transferPurchasedGirlfren(
-        uint256 tokenId,
-        address to
-    ) external payable onlyGirlfrenAuction {
-        // Check current balance of shares before deposit
-        uint256 initialShares = IERC20(_girlfrenTreasury).balanceOf(
-            address(this)
-        );
+function transferPurchasedGirlfren(
+    uint256 tokenId,
+    address to
+) external payable onlyGirlfrenAuction {
+    // Check the initial balance of vault shares for this contract
+    uint256 initialShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
 
-        // Wrap ETH into WETH
-        IWETH(WETH_ADDRESS).deposit{value: msg.value}();
+    // Wrap ETH into WETH
+    IWETH(WETH_ADDRESS).deposit{value: msg.value}();
 
-        // Approve WETH for transfer
-        IWETH(WETH_ADDRESS).approve(_girlfrenTreasury, msg.value);
+    // Approve the GirlfrenTreasury to spend the WETH
+    IWETH(WETH_ADDRESS).approve(_girlfrenTreasury, msg.value);
 
-        // Deposit ETH to vault
-        IGirlfrenTreasury(_girlfrenTreasury).depositAssets(
-            address(this),
-            msg.value
-        );
+    // Deposit the WETH into the vault (GirlfrenTreasury)
+    IGirlfrenTreasury(_girlfrenTreasury).depositAssets(address(this), msg.value);
 
-        // Check new balance of shares after deposit
-        uint256 newShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
+    // Check new balance of vault shares after deposit
+    uint256 newShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
 
-        // Calculate number of shares issued for this deposit
-        uint256 sharesIssued = newShares - initialShares;
+    // Calculate the number of shares issued due to this deposit
+    uint256 sharesIssued = newShares - initialShares;
 
-        _vaultShares[tokenId] = sharesIssued;
+    // Update the mapping for the tokenId with the new shares issued
+    _vaultShares[tokenId] = sharesIssued;
 
-        _transfer(msg.sender, to, tokenId);
-    }
+    // Transfer the NFT to the new owner
+    _transfer(msg.sender, to, tokenId);
+}
 
     /**
      * @dev Allows the minting of a Girlfren
@@ -232,6 +229,7 @@ contract Girlfren is ERC721, Ownable {
         // Increment and mint the NFT
         tokenId = nextTokenId++;
         _mint(msg.sender, tokenId);
+        return tokenId;
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
