@@ -420,7 +420,7 @@ contract GirlfrenAuction is OwnableUpgradeable {
         // If we have reached the tokens max supply,
         // we cannot create a new auction.
         require(
-            girlfrenId > IGirlfrenNFT(_auctionData.girlfrensNFT).maxSupply(),
+            girlfrenId <= IGirlfrenNFT(_auctionData.girlfrensNFT).maxSupply(),
             "No more auctions, reached max supply."
         );
 
@@ -521,6 +521,6 @@ interface IGirlfrenNFT {
     /**
      * @dev Returns the max total number of Girlfren 
      */
-    function maxSupply() external view returns (uint256);
+    function maxSupply() external pure returns (uint256);
 
 }
