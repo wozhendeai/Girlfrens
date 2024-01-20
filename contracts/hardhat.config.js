@@ -15,7 +15,11 @@ module.exports = {
     ]
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      throwOnTransactionFailures: true,
+      throwOnCallFailures: true,
+      loggingEnabled: true,
+    },
     "blast-testnet": {
       url: "https://sepolia.blast.io",
       accounts: [process.env.PRIVATE_KEY],
