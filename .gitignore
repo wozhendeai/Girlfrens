@@ -4,3 +4,6 @@ contracts/artifacts
 contracts/cache
 
 */.env
+
+contracts/coverage
+contracts/coverage.json

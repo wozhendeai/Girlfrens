@@ -1,8 +1,8 @@
 const ethers = require("hardhat").ethers;
-const { setBalance, loadFixture } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
+const { setBalance, loadFixture, } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
 
-// const WETH_ADDRESS = "0xA37F751177Ad228a434f3e7829615c6124902178";
+const WETH_ADDRESS = "0x4200000000000000000000000000000000000023";
 
 const deployFixture = async () => {
     // Create a new random wallet
@@ -12,9 +12,10 @@ const deployFixture = async () => {
     await setBalance(signer.address, ethers.parseEther("5"));
 
     // Get deployed contract
-    const WETHFactory = await ethers.getContractFactory("WETH")
-    const WETH = await WETHFactory.connect(signer).deploy();
-    await WETH.waitForDeployment();
+    const WETH = await ethers.getContractAt("WETHRebasing", WETH_ADDRESS);
+    // const WETHFactory = await getContractFactory("WETH")
+    // const WETH = await WETHFactory.connect(dev).deploy();
+    // await WETH.waitForDeployment();
     const WETHAddress = await WETH.getAddress();
 
     return { WETH, WETHAddress, signer, receiver }
