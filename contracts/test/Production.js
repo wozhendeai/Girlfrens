@@ -1,5 +1,5 @@
 const hre = require("hardhat");
-const { parseEther, parseUnits, getSigners, getContractFactory, getContractAt, getBlock } = require("hardhat").ethers;
+const { parseEther, getSigners, getContractFactory, getContractAt } = require("hardhat").ethers;
 const { loadFixture, time, setBalance } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
 
@@ -12,9 +12,6 @@ async function deployFixture() {
 
   // Get deployed contract
   const WETH = await getContractAt("WETHRebasing", WETH_ADDRESS);
-  // const WETHFactory = await getContractFactory("WETH")
-  // const WETH = await WETHFactory.connect(dev).deploy();
-  // await WETH.waitForDeployment();
   const WETHAddress = await WETH.getAddress();
 
   // TreasuryStrategy deployment
@@ -57,11 +54,11 @@ async function deployFixture() {
 }
 
 function getDefaultAuctionData() {
-  const reservePrice = BigInt(parseEther("1")); // Example value
-  const bidIncrement = BigInt(parseEther("0.01")); // Example value
+  const reservePrice = BigInt(parseEther("1")); // Minimum bid
+  const bidIncrement = BigInt(parseEther("0.01")); // Minimum bid increment
   const duration = 86400; // 1 day in seconds
   const timeBuffer = 300; // 5 minutes in seconds
-  const reservePercentage = 10; // 10%
+  const reservePercentage = 70; // (100 - reservePercentage)% will go to devs
 
   return { reservePrice, bidIncrement, duration, timeBuffer, reservePercentage }
 }
@@ -228,21 +225,14 @@ describe("Auction Tests", function () {
     // Attempt to place a bid after the auction has ended
     const bidTxPromise = await gfAuction.connect(bidder2).createBid(2, { value: reservePrice });
 
-    // Depending on the contract's logic, you can either expect the bid to be rejected or a new auction to start
-    // Uncomment the appropriate line below based on your contract's functionality
-
-    // Expect the bid to be rejected
-    // await expect(bidTxPromise).to.be.revertedWith("Auction already ended.");
-
     // Expect a new auction to start
-    // If a new auction should start, you'll need to validate that the auction's data has been reset/updated
     await expect(bidTxPromise).to.emit(gfAuction, "AuctionCreated");
   });
 
   it("Should not start a new auction after reaching max supply", async function () {
     const { gfAuction, gfNFT, dev, gfAuctionAddress } = this.fixture;
     const { reservePrice } = getDefaultAuctionData();
-  
+
     // Impersonate the auction contract
     const impersonatedSigner = await ethers.getImpersonatedSigner(gfAuctionAddress);
     await setBalance(gfAuctionAddress, 100n ** 18n);
@@ -252,13 +242,67 @@ describe("Auction Tests", function () {
     for (let i = await gfNFT.nextTokenId(); i <= maxSupply; i++) {
       await gfNFT.connect(impersonatedSigner).mint();
     }
-    const totalSupply = await gfNFT.totalSupply();
-    const totalMinted = await gfNFT.totalMinted();
 
     // Attempt to start a new auction
     await expect(
       gfAuction.connect(dev).createBid(maxSupply + BigInt(1), { value: reservePrice })
     ).to.be.revertedWith("Public sale has ended");
   });
-    
+
+  it("Should allow a Girlfren holder to redeem the NFT and receive shares", async function () {
+
+    // TODO: implement `previewWithdrawal(tokenId)` inside contract
+    async function previewWithdraw(tokenId) {
+      // Get vault shares for owner of tokenId
+      const shares = await gfNFT.getGirlfrenShares(tokenId);
+      // Call previewWithdraw
+      const previewWithdrawal = await gfTreasury.previewWithdraw(shares);
+      return previewWithdrawal;
+    }
+
+    const { gfAuction, gfAuctionAddress, gfNFT, gfNFTAddress, bidder1, gfTreasury, bidder2, WETH } = this.fixture;
+    const { reservePrice, bidIncrement, duration } = getDefaultAuctionData();
+
+    // Store the initial balance of bidder1
+    const initialBalance = await WETH.balanceOf(bidder1.address);
+
+    // Start the auction with the first bid
+    const bidAmount = reservePrice;
+    await gfAuction.connect(bidder1).createBid(1, { value: bidAmount });
+
+    // Fast forward time past the auction duration
+    await time.increase(duration + 1);
+
+    // We only minted one, so should be starting token id
+    const currTokenId = await gfNFT.START_TOKEN_ID();
+
+    // Settle auction
+    await expect(
+      await gfAuction.settleAuction()
+    )
+      .to.emit(gfAuction, "AuctionSettled").withArgs(currTokenId, bidder1.address, bidAmount)
+      .to.emit(gfNFT, "Transfer").withArgs(gfAuctionAddress, bidder1.address, currTokenId);
+
+
+    // Ensure holder receives NFT
+    expect(await gfNFT.ownerOf(currTokenId)).to.equal(bidder1.address);
+
+    // Redeem Girlfren NFT and check GirlfrenRedeemed event emitted
+    const expectedShares = await previewWithdraw(currTokenId);
+
+    await expect(
+      await gfNFT.connect(bidder1).redeemGirlfren(currTokenId)
+    )
+      .to.emit(gfAuction, "GirlfrenRedeemed").withArgs(currTokenId)
+
+    // Store the final balance of bidder1
+    const finalBalance = await WETH.balanceOf(bidder1.address);
+
+    // Calculate the balance change
+    const balanceChange = finalBalance - initialBalance;
+
+    // Check if the balance change equals the expected shares
+    expect(balanceChange).to.equal(expectedShares);
+  });
+
 });
