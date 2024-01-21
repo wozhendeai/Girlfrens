@@ -11,7 +11,7 @@ import "hardhat/console.sol";
 contract Girlfren is ERC721, Ownable {
     // Constants
     /**
-     * @dev The starting `tokenId`.
+     * @dev The first token `tokenId` that will be minted.
      */
     uint256 public constant START_TOKEN_ID = 1;
 
@@ -171,7 +171,7 @@ contract Girlfren is ERC721, Ownable {
         // We don't need to use the value again after the Girlfren has been redeemed.
         delete _vaultShares[tokenId];
 
-        IGirlfrenAuction(_girlfrenAuction).emitBonklerRedeemedEvent(tokenId);
+        IGirlfrenAuction(_girlfrenAuction).emitGirlfrenRedeemedEvent(tokenId);
 
         // Transfer the vault shares to the user
         IGirlfrenTreasury(_girlfrenTreasury).withdrawAssets(msg.sender, shares);
@@ -186,34 +186,39 @@ contract Girlfren is ERC721, Ownable {
      * while accepting a ETH deposit to be stored inside the Bonkler,
      * to be redeemed if it is burned.
      */
-function transferPurchasedGirlfren(
-    uint256 tokenId,
-    address to
-) external payable onlyGirlfrenAuction {
-    // Check the initial balance of vault shares for this contract
-    uint256 initialShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
+    function transferPurchasedGirlfren(
+        uint256 tokenId,
+        address to
+    ) external payable onlyGirlfrenAuction {
+        // Check the initial balance of vault shares for this contract
+        uint256 initialShares = IERC20(_girlfrenTreasury).balanceOf(
+            address(this)
+        );
 
-    // Wrap ETH into WETH
-    IWETH(WETH_ADDRESS).deposit{value: msg.value}();
+        // Wrap ETH into WETH
+        IWETH(WETH_ADDRESS).deposit{value: msg.value}();
 
-    // Approve the GirlfrenTreasury to spend the WETH
-    IWETH(WETH_ADDRESS).approve(_girlfrenTreasury, msg.value);
+        // Approve the GirlfrenTreasury to spend the WETH
+        IWETH(WETH_ADDRESS).approve(_girlfrenTreasury, msg.value);
 
-    // Deposit the WETH into the vault (GirlfrenTreasury)
-    IGirlfrenTreasury(_girlfrenTreasury).depositAssets(address(this), msg.value);
+        // Deposit the WETH into the vault (GirlfrenTreasury)
+        IGirlfrenTreasury(_girlfrenTreasury).depositAssets(
+            address(this),
+            msg.value
+        );
 
-    // Check new balance of vault shares after deposit
-    uint256 newShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
+        // Check new balance of vault shares after deposit
+        uint256 newShares = IERC20(_girlfrenTreasury).balanceOf(address(this));
 
-    // Calculate the number of shares issued due to this deposit
-    uint256 sharesIssued = newShares - initialShares;
+        // Calculate the number of shares issued due to this deposit
+        uint256 sharesIssued = newShares - initialShares;
 
-    // Update the mapping for the tokenId with the new shares issued
-    _vaultShares[tokenId] = sharesIssued;
+        // Update the mapping for the tokenId with the new shares issued
+        _vaultShares[tokenId] = sharesIssued;
 
-    // Transfer the NFT to the new owner
-    _transfer(msg.sender, to, tokenId);
-}
+        // Transfer the NFT to the new owner
+        _transfer(msg.sender, to, tokenId);
+    }
 
     /**
      * @dev Allows the minting of a Girlfren
@@ -229,7 +234,6 @@ function transferPurchasedGirlfren(
         // Increment and mint the NFT
         tokenId = nextTokenId++;
         _mint(msg.sender, tokenId);
-        return tokenId;
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -295,7 +299,7 @@ function transferPurchasedGirlfren(
 }
 
 interface IGirlfrenAuction {
-    function emitBonklerRedeemedEvent(uint256 bonklerId) external payable;
+    function emitGirlfrenRedeemedEvent(uint256 bonklerId) external payable;
 }
 
 interface IGirlfrenTreasury {
