@@ -357,48 +357,11 @@ contract GirlfrenAuction is OwnableUpgradeable {
      * @dev For emitting an event when a Girlfren has been redeemed.
      */
     function emitGirlfrenRedeemedEvent(uint256 girlfrenId) external payable {
-        // The caller can only be either the Girlfrens contract,
-        // TODO: [remove] or the owner of this contract (for testing purposes).
+        // The caller can only be the Girlfrens contract
         require(
-            msg.sender == _auctionData.girlfrensNFT || msg.sender == owner()
+            msg.sender == _auctionData.girlfrensNFT
         );
         emit GirlfrenRedeemed(girlfrenId);
-    }
-
-    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-    /*                 EVENT EMITTERS FOR TESTING                 */
-    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
-
-    function emitAuctionCreatedEvent(
-        uint256 girlfrenId,
-        uint256 startTime,
-        uint256 endTime
-    ) external onlyOwner {
-        emit AuctionCreated(girlfrenId, startTime, endTime);
-    }
-
-    function emitAuctionBidEvent(
-        uint256 girlfrenId,
-        address bidder,
-        uint256 amount,
-        bool extended
-    ) external onlyOwner {
-        emit AuctionBid(girlfrenId, bidder, amount, extended);
-    }
-
-    function emitAuctionExtendedEvent(
-        uint256 girlfrenId,
-        uint256 endTime
-    ) external onlyOwner {
-        emit AuctionExtended(girlfrenId, endTime);
-    }
-
-    function emitAuctionSettledEvent(
-        uint256 girlfrenId,
-        address winner,
-        uint256 amount
-    ) external onlyOwner {
-        emit AuctionSettled(girlfrenId, winner, amount);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -412,9 +375,8 @@ contract GirlfrenAuction is OwnableUpgradeable {
      * Returns whether the auction has been created successfully.
      */
     function _createAuction() internal returns (bool) {
-        // This is the index into the `generationHashHashes`.
+        // This is the index into the supply.
         // If there is no auction, its value is 0.
-        // Otherwise, its value is the next `girlfrenId`.
         uint256 girlfrenId = uint256(_auctionData.girlfrenId) + 1;
 
         // If we have reached the tokens max supply,
