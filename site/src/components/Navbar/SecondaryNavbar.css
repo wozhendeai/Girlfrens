@@ -1,0 +1,55 @@
+.secondary-navbar {
+    background-color: transparent;
+    /* Transparent background */
+    font-size: 0.85rem;
+    /* Small font size for a condensed look */
+    min-height: 40px;
+    /* Min-height to reduce the size of the navbar */
+    border-bottom: 1px solid #ddd;
+    /* Add a subtle border at the bottom */
+}
+
+.secondary-navbar .navbar {
+    padding: 0;
+    /* Remove padding */
+}
+
+.secondary-navbar .nav {
+    width: 100%;
+    justify-content: flex-end;
+    /* Align items to the right */
+}
+
+.secondary-navbar .nav-link {
+    color: #333; /* Color for the nav links */
+    padding: 5px 10px; /* Adjust padding to reduce the navbar height */
+    margin: 0 30px; /* Space between links */
+    text-transform: uppercase; /* All caps for the link text */
+    font-weight: 500; /* Normal font weight */
+    text-shadow: 
+      0 0 0 transparent, /* Top shadow */
+      0 0 0 transparent, /* Right shadow */
+      0 0 0 transparent, /* Bottom shadow */
+      0 0 0 transparent; /* Left shadow */
+  }
+  
+  .secondary-navbar .nav-link:hover,
+  .secondary-navbar .nav-link:focus {
+    color: #23448d; /* Darker color on hover/focus */
+    font-weight: 700; /* Bolder font weight for hover state */
+    text-decoration: none; /* No underline on hover/focus */
+    background-color: transparent; /* Maintain a transparent background on hover/focus */
+    /* Invisible text shadow to offset the bold weight increase */
+    text-shadow: 
+      0 0 0 transparent, /* Top shadow */
+      -1px 0 0 transparent, /* Right shadow */
+      0 0 0 transparent, /* Bottom shadow */
+      1px 0 0 transparent; /* Left shadow */
+  }
+  
+/* Adjust this media query as needed for responsive design */
+@media (max-width: 991px) {
+    .secondary-navbar .navbar-nav {
+        justify-content: center;
+    }
+}
