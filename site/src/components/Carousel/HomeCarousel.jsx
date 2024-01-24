@@ -1,6 +1,6 @@
 import { Carousel } from "react-bootstrap";
 import ImageOne from "/Carousel/1.svg";
-import ImageTwo from "/Carousel/1.svg";
+import ImageTwo from "/Carousel/2.svg";
 import "./HomeCarousel.css";
 
 function HomeCarousel() {
