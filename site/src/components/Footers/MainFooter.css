@@ -1,0 +1,57 @@
+.main-footer {
+    background-color: #ffffff;
+    /* Light gray background */
+    padding: 20px 0;
+}
+
+.footer-social h5,
+.footer-social Nav {
+    text-align: left;
+}
+
+.footer-social Nav {
+    font-size: 24px;
+    /* Bigger icons */
+}
+
+/* Adjust link styles as needed */
+.main-footer .nav-link {
+    color: #000;
+}
+
+/* Ensure that the footer columns are aligned and spaced nicely */
+.main-footer .col {
+    margin-bottom: 20px;
+}
+
+/* SecondaryFooter.css */
+.secondary-footer {
+    background-color: #343a40;
+    /* Dark background */
+    color: #fff;
+    padding: 10px 0;
+    font-size: 0.8em;
+}
+
+.footer-legal {
+    text-align: left;
+}
+
+.footer-help {
+    text-align: right;
+}
+
+/* Adjust the legal and help text as needed */
+.secondary-footer p {
+    margin-bottom: 0;
+}
+
+.secondary-footer .nav-link {
+    color: #fff;
+    opacity: 0.7;
+}
+
+.secondary-footer .nav-link:hover,
+.secondary-footer .nav-link:focus {
+    opacity: 1;
+}

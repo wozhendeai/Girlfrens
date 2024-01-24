@@ -1,7 +1,10 @@
-import HomeCarousel from './components/Navbar/Carousel/HomeCarousel'
+import HomeCarousel from './components/Carousel/HomeCarousel'
 import CustomNavbar from './components/Navbar/Navbar'
 import SecondaryNavbar from './components/Navbar/SecondaryNavbar'
 import "./App.css";
+import AuctionCard from './components/AuctionCard/AuctionCard';
+import MainFooter from './components/Footers/MainFooter';
+import FollowUsFooter from './components/Footers/FollowUsFooter';
 
 function App() {
 
@@ -17,10 +20,14 @@ function App() {
 
       {/* Live Auction Header */}
       <div className="live-auction-header-container">
-        <h2>Live Auction</h2>
+        <h2>Current Auction</h2>
       </div>
-
+      {/* Current Auction Card */}
+      <AuctionCard />
+      
       {/* Footer */}
+      <FollowUsFooter />
+      <MainFooter />
     </>
   )
 }
