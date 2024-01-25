@@ -1,0 +1,10 @@
+/* AuctionBidButton.css */
+.input-group .form-control {
+    flex: 0 0 auto; /* Do not allow the input to grow */
+    width: 140px; /* Set a fixed width for the input */
+}
+
+.input-group .btn {
+    flex: 1; /* Allow the button to fill up the remaining space */
+    min-width: 120px; /* Ensure the button has at least this width */
+}
