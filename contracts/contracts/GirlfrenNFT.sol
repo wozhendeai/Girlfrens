@@ -42,6 +42,11 @@ contract Girlfren is ERC721, Ownable {
     address internal _girlfrenTreasury;
 
     /**
+     * @dev The Girlfren trait manager contract
+     */
+    address internal _girlfrensTraitManager;
+
+    /**
      * @dev The next `tokenId` to be minted.
      */
     uint32 public nextTokenId;
@@ -75,13 +80,16 @@ contract Girlfren is ERC721, Ownable {
     /**
      * @dev ERC721 override to return the token URI for `tokenId`.
      */
-    // function tokenURI(
-    //     uint256 tokenId
-    // ) public view virtual override returns (string memory result) {
-    //     require(ownerOf(tokenId) == address(0), "Token does not exist.");
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory result) {
+        require(ownerOf(tokenId) != address(0), "Token does not exist.");
 
-    //     // TODO: Implement on-chain art
-    // }
+        string memory metadata = IGirlfrenTraitsManager(_girlfrensTraitManager)
+            .getMetadata(tokenId);
+
+        return metadata;
+    }
 
     /**
      * @dev Returns the amount of vault shares stored in `tokenId`.
@@ -234,6 +242,10 @@ contract Girlfren is ERC721, Ownable {
         // Increment and mint the NFT
         tokenId = nextTokenId++;
         _mint(msg.sender, tokenId);
+
+        // Initiate random on-chain metadata generation
+        IGirlfrenTraitsManager(_girlfrensTraitManager)
+            .requestRandomnessForToken(tokenId);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -249,11 +261,21 @@ contract Girlfren is ERC721, Ownable {
     }
 
     /**
-     * @dev Sets the minter.
+     * @dev Sets the treasury address.
      */
     function setGirlfrenTreasury(address girlfrenTreasury) external onlyOwner {
         require(!minterLocked, "Locked.");
         _girlfrenTreasury = girlfrenTreasury;
+    }
+
+    /**
+     * @dev Sets the trait manager.
+     */
+    function setGirlfrensTraitManager(
+        address girlfrenTraitManager
+    ) external onlyOwner {
+        require(!minterLocked, "Locked.");
+        _girlfrensTraitManager = girlfrenTraitManager;
     }
 
     /**
@@ -308,6 +330,12 @@ interface IGirlfrenTreasury {
     function withdrawAssets(address receiver, uint256 assets) external payable;
 
     function transferShares(address to, uint256 amount) external;
+}
+
+interface IGirlfrenTraitsManager {
+    function requestRandomnessForToken(uint256 tokenId) external payable;
+
+    function getMetadata(uint256 tokenId) external view returns (string memory);
 }
 
 interface IWETH {
