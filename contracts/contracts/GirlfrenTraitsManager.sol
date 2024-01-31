@@ -12,8 +12,8 @@ contract GirlfrenTraitManager {
     string public constant BASE_URI = "ipfs://[id]/";
     // Address of Girlfrens NFT contract
     address private _girlfrenNFT;
-    // Address of entropy provider
-    address private _entropyProvider;
+    // Address of Pyth Network entropy contract
+    address private _entropy;
 
     struct GirlfrenTraits {
         string race;
@@ -36,9 +36,9 @@ contract GirlfrenTraitManager {
     event TraitsAssigned(uint256 tokenId, GirlfrenTraits traits);
 
     // Constructor
-    constructor(address girlfrenNFT, address entropyProvider) {
+    constructor(address girlfrenNFT, address entropy) {
         _girlfrenNFT = girlfrenNFT;
-        _entropyProvider = entropyProvider;
+        _entropy = entropy;
     }
 
     // Modifiers
@@ -53,29 +53,32 @@ contract GirlfrenTraitManager {
     // External Functions
     function requestRandomnessForToken(
         uint256 tokenId
-    ) external payable onlyGirlfrenNFT {
-        uint256 fee = IEntropy(_entropyProvider).getFee(_entropyProvider);
-        console.log("fee: %s", fee);
+    ) external payable {
+        uint256 fee = IEntropy(_entropy).getFee(_getDefaultEntropyProvider());
 
         require(
             msg.value >= fee,
-            "GirlfrenTraitManager: Insufficient fee for randomness request"
+            "Insufficient fee for randomness request"
         );
-        // Convert uint256 to bytes32
+
         bytes32 hashedValue = bytes32(
-            keccak256(abi.encodePacked(block.timestamp, tokenId))
+            keccak256(
+                abi.encodePacked(
+                    "aaa2d70f9c4835e80af0a820743ef997ab11afd4d09ac55263797f4789e749f3"
+                )
+            )
         );
-        bytes32 userCommitment = IEntropy(_entropyProvider)
+
+        bytes32 userCommitment = IEntropy(_entropy)
             .constructUserCommitment(hashedValue);
-        console.log("constructed");
-        uint64 sequenceNumber = IEntropy(_entropyProvider).request{value: fee}(
-            _entropyProvider,
+
+        uint64 sequenceNumber = IEntropy(_entropy).request{value: fee}(
+            _getDefaultEntropyProvider(),
             userCommitment,
             true
         );
-        console.log("requested? %s", sequenceNumber);
-        entropyRequests[sequenceNumber] = tokenId;
 
+        entropyRequests[sequenceNumber] = tokenId;
         emit RandomnessRequested(sequenceNumber, tokenId);
     }
 
@@ -92,8 +95,8 @@ contract GirlfrenTraitManager {
         );
 
         // Proceed to reveal and assign traits
-        bytes32 randomNumber = IEntropy(_entropyProvider).reveal(
-            _entropyProvider,
+        bytes32 randomNumber = IEntropy(_entropy).reveal(
+            _getDefaultEntropyProvider(),
             sequenceNumber,
             userRandom,
             providerRandom
@@ -138,6 +141,10 @@ contract GirlfrenTraitManager {
             "GirlfrenTraitManager: Trait options are empty"
         );
         return options[randomValue % options.length];
+    }
+
+    function _getDefaultEntropyProvider() internal view returns (address _provider){
+        _provider = IEntropy(_entropy).getDefaultProvider();
     }
 
     // Public View Functions
