@@ -1,0 +1,88 @@
+/* Auction.css */
+.auction-container {
+    margin-top: 50px;
+    /* Add more margin to the top for vertical centering */
+    display: flex;
+    justify-content: center;
+    /* Center the card horizontally */
+    min-height: 80vh;
+    /* Increase the height so that the card is more centered vertically */
+}
+
+.auction-container .row {
+    width: 100%;
+    /* Adjust this to set how wide you want the card to be */
+}
+
+.auction-container .card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    /* Add space below the card */
+    width: 100%;
+    /* Make card full width to utilize the space */
+}
+
+.auction-container .card-img-top {
+    height: 400px;
+    /* Increase fixed height for the image */
+    object-fit: cover;
+    background: #ececec;
+}
+
+.auction-container .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    /* Adds space between flex items */
+    padding: 20px;
+    /* Increase padding inside the card body */
+}
+
+.auction-container .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.auction-container .badge {
+    display: inline-block;
+    /* Make the badge only as wide as its content */
+    padding: 0.5em 0.75em;
+    /* Add padding inside the badge */
+}
+
+.auction-container .btn-primary {
+    padding: 0.75rem 1rem;
+    /* Increase padding for a larger button */
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    /* Add space above the button */
+}
+
+.line {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    background-color: rgb(206, 206, 206);
+    height: 1px;
+    margin-top: 8px;
+}  
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .auction-container .card-img-top {
+        height: auto;
+    }
+
+    .auction-container .card-body {
+        padding: 15px;
+        /* Adjust padding for small screens */
+    }
+
+    .auction-container .btn-primary {
+        font-size: 1rem;
+        /* Adjust font size for small screens */
+        padding: 0.5rem 1rem;
+        /* Adjust padding for small screens */
+    }
+}

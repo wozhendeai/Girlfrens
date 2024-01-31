@@ -1,0 +1,33 @@
+.custom-navbar {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-navbar .navbar-brand {
+    font-weight: bold;
+    color: #333;
+    font-size: 2rem;
+    /* Set the color to match your brand */
+}
+
+.custom-navbar .nav-link,
+.custom-navbar .navbar-toggler {
+    color: #555;
+    /* Adjust the color for the links and toggler */
+}
+
+.custom-navbar .navbar-toggler {
+    border: none;
+}
+
+.custom-navbar .nav-item {
+    padding: 0 10px;
+    /* Adjust spacing around nav items */
+}
+
+.custom-navbar .nav-dropdown {
+    position: static;
+    /* This might be needed to position the dropdown properly */
+}
+
+/* You may also want to style the dropdown menu, dropdown items, and active/hover states */

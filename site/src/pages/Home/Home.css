@@ -1,0 +1,11 @@
+.live-auction-header-container {
+    text-align: center;
+    padding: 20px 0;
+}
+
+@media only screen and (min-width: 1024px) {
+    .live-auction-header-container h2 {
+        font-size: 2.5em;
+        margin-bottom: 32px;
+    }    
+}

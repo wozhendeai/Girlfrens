@@ -1,0 +1,57 @@
+/* FollowUsFooter.css */
+.follow-us-footer {
+    background-color: #f8f9fa;
+    /* Assuming a light gray background */
+    padding: 20px 0;
+}
+
+.follow-us-content {
+    display: flex;
+    /* Use flexbox for alignment */
+    align-items: center;
+    /* Center items vertically */
+    justify-content: left;
+    /* Align items to the start */
+    text-align: left;
+    /* Align text to the left */
+    gap: 200px;
+}
+
+.follow-us-text {
+    font-weight: bold;
+    font-size: 2rem;
+    /* Larger text size */
+    margin-right: 30px;
+    /* Increase spacing between text and icons */
+}
+
+.social-icon {
+    color: #000;
+    /* Icon color */
+    margin: 0 20px;
+    /* Increase spacing between icons */
+    font-size: 36px;
+    /* Larger icon size */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .follow-us-content {
+        justify-content: center;
+        /* Center content on small screens */
+    }
+
+    .follow-us-text {
+        margin-right: 15px;
+        /* Adjust spacing for small screens */
+        font-size: 1.5rem;
+        /* Adjust text size for small screens */
+    }
+
+    .social-icon {
+        margin: 0 15px;
+        /* Adjust icon spacing for small screens */
+        font-size: 30px;
+        /* Adjust icon size for small screens */
+    }
+}
