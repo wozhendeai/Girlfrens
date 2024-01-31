@@ -90,12 +90,10 @@ describe("GirlfrenTraitManager", function () {
         // Fetch the provider's number
         const data = await fetch(`${entropyProviderUri}/revelations/${sequenceNumber}`);
         let json = await data.json();
-        console.log(json);
-        const providerRandomNumber = json.providerRandomNumber;
+        const providerRandomNumber = json.value.data;
 
         // Reveal number
-        await entropyProvider.reveal(entropyProviderAddress, sequenceNumber, randomString, json.providerRandomNumber)
-
+        await entropyProvider.reveal(entropyProviderAddress, sequenceNumber, randomString, "0x" + providerRandomNumber)
     });
 
     // it("Should initiate randomness request", async function () {
