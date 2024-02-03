@@ -14,6 +14,7 @@
   "scripts": {
     "node": "npx hardhat node --fork https://sepolia.blast.io",
     "test": "npx hardhat test --network localhost",
-    "deploy": "npx hardhat run ./scripts/deploy.js --network \"blast-testnet\""
+    "initializeAuction": "npx hardhat run ./scripts/initializeAuction.js --network \"blast-testnet\"",
+    "getAuctionData": "npx hardhat run ./scripts/getAuctionData.js --network \"blast-testnet\""
   }
 }
