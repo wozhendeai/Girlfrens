@@ -11,14 +11,14 @@ function AuctionBidButton() {
 
     async function handleOnClick(e) {
         e.preventDefault();
-        console.log(`Auction data:` + auctionData, `Bid amount:` + bidAmount)
-        console.log()
         if (!auctionData || !bidAmount) return;
+        
         // If auction hasn't started or is settled but next auction hasn't started, we add one to girlfren id
         if(auctionData.girlfrenId == 0 || auctionData.endTime == null) {
-            auctionData.girlfrenId = auctionData.girlfrenId + 1;
+            auctionData.girlfrenId = 1;
         }
-        bid(Number(auctionData.girlfrenId), parseEther(bidAmount));
+
+        bid(auctionData.girlfrenId, parseEther(bidAmount));
     }
 
     return (
