@@ -8,8 +8,13 @@ import ImageThree from "/Carousel/3.svg";
 // CSS
 import './Auction.css';
 import AuctionBidButton from '../../components/AuctionBidButton/AuctionBidButton';
+import useAuctionData from '../../hooks/useAuctionData';
 
 function Auction() {
+  const { auctionData, isLoading } = useAuctionData();
+
+  const reservePriceDisplay = isLoading ? `${auctionData?.reservePrice || '0.1'} - 1 ETH` : 'Loading...';
+  console.log(auctionData?.reservePrice)
   return (
     <Container className="auction-container">
       <Row>
@@ -39,7 +44,7 @@ function Auction() {
               {/* Show reserve price and highest accepted bid */}
               <div className="auction-estimate mb-2" style={{ margin: "5px" }}>
                 <span>Estimate</span><br />
-                <span>2,000 - 5,000 USD</span>
+                <span>{reservePriceDisplay}   </span>
               </div>
               <div className='line' />
 
