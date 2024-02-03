@@ -11,9 +11,14 @@ function AuctionBidButton() {
 
     async function handleOnClick(e) {
         e.preventDefault();
-        console.log(auctionData, bidAmount)
+        console.log(`Auction data:` + auctionData, `Bid amount:` + bidAmount)
+        console.log()
         if (!auctionData || !bidAmount) return;
-        bid(auctionData.girlfrenId, parseEther(bidAmount)); // Assuming you're using ethers.js for BigNumber handling
+        // If auction hasn't started or is settled but next auction hasn't started, we add one to girlfren id
+        if(auctionData.girlfrenId == 0 || auctionData.endTime == null) {
+            auctionData.girlfrenId = auctionData.girlfrenId + 1;
+        }
+        bid(Number(auctionData.girlfrenId), parseEther(bidAmount));
     }
 
     return (

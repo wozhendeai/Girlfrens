@@ -3,6 +3,7 @@ import ConnectWalletButton from '../../components/ConnectWalletButton/ConnectWal
 import { useAccount } from 'wagmi';
 
 // Images
+import Blank from "/Carousel/Blank.svg";
 import ImageThree from "/Carousel/3.svg";
 
 // CSS
@@ -13,15 +14,23 @@ import useAuctionData from '../../hooks/useAuctionData';
 function Auction() {
   const { auctionData, isLoading } = useAuctionData();
 
-  const reservePriceDisplay = isLoading ? `${auctionData?.reservePrice || '0.1'} - 1 ETH` : 'Loading...';
-  console.log(auctionData?.reservePrice)
+  // If the first auction hasn't started
+  // Or if an auction has ended & the next one hasn't been created
+  const auctionNotStarted = auctionData?.startTime == null;
+  const reservePriceDisplay = isLoading ? 'Loading...' : `${auctionData?.reservePrice || '0.1'} - 1 ETH`;
+  const currentTokenId = isLoading ? "Loading..." : `${auctionData?.girlfrenId || '0'}`;
+
   return (
     <Container className="auction-container">
       <Row>
         {/* NFT image */}
         <Col lg={6} className="mb-4 image-col">
           <Card className="border-0">
-            <Card.Img src={ImageThree} alt="Auction Item" className="img-fluid" />
+            {
+              auctionNotStarted
+                ? <Card.Img src={Blank} alt="Auction Item" className="img-fluid" />
+                : <Card.Img src={ImageThree} alt="Auction Item" className="img-fluid" />
+            }
           </Card>
         </Col>
         {/* Auction data/input */}
@@ -29,18 +38,24 @@ function Auction() {
           <Card>
             <Card.Body>
               {/* NFT info */}
-              <Card.Title>RJ Barrett New York Knicks 2023-2024 Game Worn Statement Edition Jersey</Card.Title>
+              <Card.Title>Girlfren ID #{currentTokenId}</Card.Title>
 
               <Badge bg="success" className="mb-3">No reserve</Badge>
 
               {/* Show auction end date */}
               <div className="lot-details" style={{ margin: "5px" }}>
                 <span>Lot closes</span> <br />
-                <span>20:48:51 • January 25, 02:02 PM EST</span>
+
+                {
+                  auctionNotStarted
+                    ? <span><i>Auction hasn{`'`}t started yet. Bid now to start the auction</i></span>
+                    : <span>20:48:51 • January 25, 02:02 PM EST</span>
+                }
+
               </div>
 
               <div className='line' />
-              
+
               {/* Show reserve price and highest accepted bid */}
               <div className="auction-estimate mb-2" style={{ margin: "5px" }}>
                 <span>Estimate</span><br />

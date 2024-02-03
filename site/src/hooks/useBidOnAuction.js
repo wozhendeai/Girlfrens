@@ -1,23 +1,26 @@
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
-import { abi, config } from '../contractConfig'; // Adjust the import path as necessary
+// useBidOnAuction.js
+import { useWriteContract } from 'wagmi';
+import { abi, config } from '../contractConfig'; // Ensure paths are correct
+import { blastSepolia } from 'viem/chains'; // Ensure paths are correct
+import { parseEther } from 'viem';
 
 const useBidOnAuction = () => {
-    const { write: placeBid, data: transaction, error, isLoading: isBidding } = useWriteContract({
-        addressOrName: config.girlfrenAuction,
-        contractInterface: abi,
-        functionName: 'createBid',
-        // args will be passed dynamically in the bid function
-    });
-
-    const { data: receipt, isLoading: isConfirming } = useWaitForTransactionReceipt({
-        hash: transaction?.hash,
-    });
+    const { writeContract, data, error, isLoading, writeContractAsync } = useWriteContract();
 
     const bid = async (tokenId, bidAmount) => {
-        return placeBid({ args: [tokenId, { value: bidAmount }] });
+        console.log(tokenId, bidAmount)
+        // Use writeContractAsync for an async/await pattern, if preferred
+        return writeContract({
+            address: config.girlfrenAuction,
+            abi: abi.abi,
+            chainId: blastSepolia.id,
+            functionName: 'createBid',
+            args: [0],
+            value: bidAmount + parseEther('0.05')
+        });
     };
 
-    return { bid, transaction, receipt, error, isBidding, isConfirming };
+    return { bid, transaction: data, error, isBidding: isLoading };
 };
 
 export default useBidOnAuction;
