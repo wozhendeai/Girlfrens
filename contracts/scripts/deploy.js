@@ -5,7 +5,6 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const crypto = require('crypto');
 const ethers = hre.ethers;
 
 async function main() {
@@ -39,11 +38,6 @@ async function main() {
   // Deploy girlfrens NFT contract
   const girlfrenNFTAddress = await deployContract("Girlfren");
 
-  // Deploy girlfrens trait manager
-  const generationHashes = generateGenerationHashes(1001);
-  const girlfrenTraitManagerAddress = await deployContract("GirlfrenTraitManager", girlfrenNFTAddress, ENTROPY_CONTRACT, generationHashes);
-
-
   // Get Girlfren NFT contract to interact with and Girlfren Treasury
   const GirlfrenNFT = await ethers.getContractFactory("Girlfren");
   const girlfrenNFT = await GirlfrenNFT.attach(girlfrenNFTAddress);
@@ -58,9 +52,6 @@ async function main() {
   await girlfrenNFT.setGirlfrenTreasury(girlfrenTreasuryAddress);
   console.log(`Set girlfren treasury contract address in girlfren nft to ${girlfrenTreasuryAddress}`);
 
-  await girlfrenNFT.setGirlfrensTraitManager(girlfrenTraitManagerAddress);
-  console.log(`Set girlfren trait manager contract address in girlfren nft to ${girlfrenTraitManagerAddress}`);
-
   await girlfrenTreasury.setGirlfrensNFTAddress(girlfrenNFTAddress);
   console.log(`Set girlfren nft contract address in girlfren treasury to ${girlfrenNFTAddress}`);
 }
@@ -74,20 +65,6 @@ const deployContract = async (contractName, ...args) => {
   const contractAddress = await contract.getAddress();
   console.log(`Deployed ${contractName}; Address: ${contractAddress}`)
   return contractAddress;
-}
-
-const generateGenerationHashes = (num) => {
-  let hashes = [], randomString, randomHexString, commitment;
-  for (let i = 0; i < num; i++) {
-    // Generate a 32-byte random number on the client side, then hash it with keccak256 to create a commitment 
-    randomString = crypto.randomBytes(32);
-    randomHexString = '0x' + randomString.toString("hex");;
-
-    // Hash it with keccak256 to create a commitment 
-    commitment = ethers.keccak256(randomHexString);
-    hashes.push(commitment);
-  }
-  return hashes;
 }
 
 // We recommend this pattern to be able to use async/await everywhere

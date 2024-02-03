@@ -4,11 +4,14 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "solady/src/utils/LibString.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "hardhat/console.sol";
 
 contract Girlfren is ERC721, Ownable {
+    using LibString for *;
+
     // Constants
     /**
      * @dev The first token `tokenId` that will be minted.
@@ -67,6 +70,11 @@ contract Girlfren is ERC721, Ownable {
     bool public mintLocked;
 
     /**
+     * @dev Whether the base URI is permanently locked.
+     */
+    bool public baseURILocked;
+
+    /**
      * @dev Mapping of `tokenId` to shares (amount of vault shares stored in each Girlfren).
      */
     mapping(uint256 => uint256) private _vaultShares;
@@ -85,10 +93,10 @@ contract Girlfren is ERC721, Ownable {
     ) public view virtual override returns (string memory result) {
         require(ownerOf(tokenId) != address(0), "Token does not exist.");
 
-        string memory metadata = IGirlfrenTraitsManager(_girlfrensTraitManager)
-            .getMetadata(tokenId);
-
-        return metadata;
+        result = __baseURI;
+        if (bytes(result).length != 0) {
+            result = result.replace("{id}", LibString.toString(tokenId));
+        }
     }
 
     /**
@@ -242,10 +250,6 @@ contract Girlfren is ERC721, Ownable {
         // Increment and mint the NFT
         tokenId = nextTokenId++;
         _mint(msg.sender, tokenId);
-
-        // Initiate random on-chain metadata generation
-        IGirlfrenTraitsManager(_girlfrensTraitManager)
-            .requestRandomnessForToken(tokenId);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -269,22 +273,12 @@ contract Girlfren is ERC721, Ownable {
     }
 
     /**
-     * @dev Sets the trait manager.
-     */
-    function setGirlfrensTraitManager(
-        address girlfrenTraitManager
-    ) external onlyOwner {
-        require(!minterLocked, "Locked.");
-        _girlfrensTraitManager = girlfrenTraitManager;
-    }
-
-    /**
      * @dev Sets the base URI.
      */
-    // function setBaseURI(string memory baseURI) external onlyOwner {
-    //     require(!baseURILocked, "Locked.");
-    //     __baseURI = baseURI;
-    // }
+    function setBaseURI(string memory baseURI) external onlyOwner {
+        require(!baseURILocked, "Locked.");
+        __baseURI = baseURI;
+    }
 
     /**
      * @dev Permanently locks the minter from being changed.
@@ -303,9 +297,9 @@ contract Girlfren is ERC721, Ownable {
     /**
      * @dev Permanently locks the base URI.
      */
-    // function lockBaseURI() external onlyOwner {
-    //     baseURILocked = true;
-    // }
+    function lockBaseURI() external onlyOwner {
+        baseURILocked = true;
+    }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                 INTERNAL / PRIVATE HELPERS                 */
@@ -330,12 +324,6 @@ interface IGirlfrenTreasury {
     function withdrawAssets(address receiver, uint256 assets) external payable;
 
     function transferShares(address to, uint256 amount) external;
-}
-
-interface IGirlfrenTraitsManager {
-    function requestRandomnessForToken(uint256 tokenId) external payable;
-
-    function getMetadata(uint256 tokenId) external view returns (string memory);
 }
 
 interface IWETH {
