@@ -13,25 +13,33 @@ const useAuctionData = () => {
 
   // Transform the raw data into a more friendly format
   const formattedData = data ? {
-    bidder: data.bidder,
+    ...data,
     amount: formatEther(data.amount),
     withdrawable: formatEther(data.withdrawable),
-    // Incase the first auction hasn't started yet:
-    startTime: data.startTime !== 0 ? data.startTime : null,
-    endTime: data.endTime !== 0 ? data.endTime : null,
-    girlfrenId: data.girlfrenId,
-    settled: data.settled,
-    reservePercentage: data.reservePercentage,
-    girlfrensNFT: data.girlfrensNFT,
+    startTime: data.startTime !== 0 ? data.startTime : 0,
+    endTime: data.endTime !== 0 ? formatDate(data.endTime) : 0, // Format endTime directly
     reservePrice: formatEther(data.reservePrice),
     bidIncrement: formatEther(data.bidIncrement),
-    duration: data.duration,
-    timeBuffer: data.timeBuffer,
     girlfrenBalance: data.girlfrenBalance.toString(),
     girlfrensTotalRedeemed: data.girlfrensTotalRedeemed.toString(),
   } : null;
 
   return { auctionData: formattedData, error, isLoading };
+};
+
+const formatDate = (timestamp) => {
+  if (!timestamp) {
+    return null; // Return null or a sensible default
+  }
+
+  const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+
+  const formattedDate = new Intl.DateTimeFormat('en-US', dateOptions).format(date);
+  const formattedTime = new Intl.DateTimeFormat('en-US', timeOptions).format(date);
+
+  return `${formattedTime} • ${formattedDate}`;
 };
 
 const formatEther = (bn) => {
