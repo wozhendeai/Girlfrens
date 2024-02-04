@@ -1,3 +1,7 @@
+/**
+ * @dev Routes for all current contract addresses
+ * @description Primarily helpful for rapid web-development
+ */
 const express = require('express');
 const prisma = require("../prismaClient");
 const router = express.Router();

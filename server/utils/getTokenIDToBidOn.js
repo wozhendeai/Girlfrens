@@ -40,3 +40,5 @@ async function getTokenIDToBidOn() {
         return "Error retrieving token ID to bid on.";
     }
 }
+
+module.exports = getTokenIDToBidOn;

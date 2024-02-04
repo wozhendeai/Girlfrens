@@ -29,6 +29,7 @@ model Bid {
   id       Int      @id @default(autoincrement())
   amount   Float    // The bid amount
   bidder   String   // Address of the bidder
+  extended Boolean  // Whether bid extended auction
   auction  Auction  @relation(fields: [auctionId], references: [id])
   auctionId Int
 }
