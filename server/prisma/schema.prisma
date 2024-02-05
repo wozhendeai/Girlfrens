@@ -14,6 +14,7 @@ model ContractAddress {
   id                Int      @id @default(autoincrement())
   name              String   @unique // A name to identify the contract, e.g., "treasuryStrategy"
   address           String   // The contract address
+  // deployedAt        BigInt
   updatedAt         DateTime @updatedAt
 }
 

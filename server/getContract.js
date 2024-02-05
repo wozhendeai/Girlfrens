@@ -1,9 +1,8 @@
 const ethers = require('ethers');
-const prisma = require("./prismaClient");
+const getContractAddress = require('./utils/contractData/getContractAddress');
 const abi = require("../contracts/artifacts/contracts/GirlfrenAuction.sol/GirlfrenAuction.json");
 
 async function getAuctionContract() {
-    const getContractAddress = require('./utils/contractData/getContractAddress');
     const contractAddress = await getContractAddress("girlfrenAuction");
     if (!contractAddress) {
         throw new Error("Contract address for 'girlfrenAuction' not found.");
@@ -13,7 +12,6 @@ async function getAuctionContract() {
 }
 
 async function getNFTContract() {
-    const getContractAddress = require('./utils/contractData/getContractAddress');
     const contractAddress = await getContractAddress("girlfrenNFT");
     if (!contractAddress) {
         throw new Error("Contract address for 'girlfrenNFT' not found.");

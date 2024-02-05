@@ -54,6 +54,8 @@ async function main() {
 
   await girlfrenTreasury.setGirlfrensNFTAddress(girlfrenNFTAddress);
   console.log(`Set girlfren nft contract address in girlfren treasury to ${girlfrenNFTAddress}`);
+
+  // TODO: Send POST to server with updated addresses & block they were mined at
 }
 
 // Utils
