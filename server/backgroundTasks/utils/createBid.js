@@ -1,4 +1,4 @@
-const prisma = require('../prismaClient');
+const prisma = require('../../prismaClient');
 const ethers = require('ethers');
 
 async function createBid(amount, bidder, girlfrenId, extended) {
