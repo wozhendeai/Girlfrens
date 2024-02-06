@@ -22,7 +22,7 @@ router.get('/current-token', async (req, res) => {
 router.get('/:tokenId/bids', async (req, res) => {
   const { tokenId } = req.params;
   try {
-    const bids = await getBidsForTokenID();
+    const bids = await getBidsForTokenID(tokenId);
     // TODO: better response
     res.json({ bids });
   } catch (error) {
