@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ContractAddress {
+  id                Int      @id @default(autoincrement())
+  name              String   @unique // A name to identify the contract, e.g., "treasuryStrategy"
+  address           String   // The contract address
+  updatedAt         DateTime @updatedAt
+}
+
+model Auction {
+  id        Int      @id @default(autoincrement())
+  tokenId   Int      // The ID of the NFT
+  startTime DateTime // Start time of the auction
+  endTime   DateTime // End time of the auction
+  bids      Bid[]
+}
+
+model Bid {
+  id       Int      @id @default(autoincrement())
+  amount   Float    // The bid amount
+  bidder   String   // Address of the bidder
+  extended Boolean  // Whether bid extended auction
+  auction  Auction  @relation(fields: [auctionId], references: [id])
+  auctionId Int
+}
