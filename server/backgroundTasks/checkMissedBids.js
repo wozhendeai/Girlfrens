@@ -1,6 +1,6 @@
 const { ethers } = require('ethers');
 const prisma = require('../prismaClient');
-const getAuctionContract = require('../utils/getContract');
+const { getAuctionContract } = require('../getContract.js');
 const createBid = require('./utils/createBid');
 
 // Function to check for missed bids

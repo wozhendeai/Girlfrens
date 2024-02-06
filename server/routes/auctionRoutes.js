@@ -29,3 +29,5 @@ router.get('/:tokenId/bids', async (req, res) => {
     console.error(error);
   }
 });
+
+module.exports = router;

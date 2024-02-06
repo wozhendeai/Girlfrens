@@ -5,7 +5,7 @@ const cron = require('node-cron');
 const checkMissedBids = require('./backgroundTasks/checkMissedBids');
 const contractRoutes = require('./routes/contractRoutes.js');
 const auctionRoutes = require('./routes/auctionRoutes.js');
-const setupEventListeners = require('./routes/eventRoutes');
+const setupEventListeners = require('./backgroundTasks/trackBids.js');
 
 const app = express();
 
@@ -19,7 +19,12 @@ setupEventListeners()
   .then(() => console.log('Event listeners are set up.'))
   .catch((error) => console.error('Error setting up event listeners:', error));
 
-// Ensure server did not miss any bids
+// Perform an immediate check for missed bids at startup
+checkMissedBids()
+  .then(() => console.log('Initial check for missed bids completed.'))
+  .catch(err => console.error('Initial check for missed bids failed:', err));
+
+// Schedule checks for missed bids to run every 30 minutes
 cron.schedule('*/30 * * * *', () => {
   console.log('Checking for missed bids...');
   checkMissedBids()
