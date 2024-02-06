@@ -2,13 +2,12 @@ const crypto = require('crypto');
 const ethers = hre.ethers;
 
 
-
 const main = async () => {
     const [ deployer ] = await ethers.getSigners();
 
     // TODO: Get dynamically
-    const girlfrenAuctionAddress = "0xD9224Cb60E18287724637DF217CD154ae0C6a95b";
-    const girlfrensNFTAddress = "0xf20cdD5A98acD5Ae1f0f771527394C93Dc9187Bf";
+    const girlfrenAuctionAddress = "0xa998c689E471AeE9E6f93b177CF4E90562903c62";
+    const girlfrensNFTAddress = "0xBe30d4751F7661729e1d170B33D0fe2ED71C6Fa4";
 
     // Get Girlfren Auction contract to interact with and Girlfren Treasury
     const GirlfrenAuction = await ethers.getContractFactory("GirlfrenAuction");

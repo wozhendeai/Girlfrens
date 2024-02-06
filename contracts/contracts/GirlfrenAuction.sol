@@ -91,7 +91,7 @@ contract GirlfrenAuction is OwnableUpgradeable {
         // The minimum amount of time left in an auction after a new bid is created.
         uint32 timeBuffer;
         // The amount of ETH in the Girlfrens NFT contract.
-        // This can be considered as the treasury balance.
+        // This can be considered as the treasury balance. TODO: add vault balance for full
         uint256 girlfrenBalance;
         // Total number of Girlfrens redeemed.
         uint256 girlfrensTotalRedeemed;

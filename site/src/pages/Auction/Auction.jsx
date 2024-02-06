@@ -1,48 +1,65 @@
 import { Container, Row, Col, Card, Badge } from 'react-bootstrap';
 import ConnectWalletButton from '../../components/ConnectWalletButton/ConnectWalletButton';
-import { useAccount } from 'wagmi';
+import AuctionLoading from './AuctionLoading';
 
 // Images
+import Blank from "/Carousel/Blank.svg";
 import ImageThree from "/Carousel/3.svg";
 
 // CSS
 import './Auction.css';
 import AuctionBidButton from '../../components/AuctionBidButton/AuctionBidButton';
 
+// Hooks
+import useAuctionData from '../../hooks/useAuctionData';
+import { useAccount } from 'wagmi';
+
 function Auction() {
+  const { auctionData, isLoading } = useAuctionData();
+
+  if (isLoading) return <AuctionLoading />;
+
+  // If the first auction hasn't started
+  // Or if an auction has ended & the next one hasn't been created
+  const auctionNotStarted = auctionData?.startTime == null;
+
   return (
     <Container className="auction-container">
       <Row>
         <Col lg={6} className="mb-4 image-col">
           <Card className="border-0">
-            <Card.Img src={ImageThree} alt="Auction Item" className="img-fluid" />
+            {auctionNotStarted ? (
+              <Card.Img src={Blank} alt="Auction Item" className="img-fluid" />
+            ) : (
+              <Card.Img src={ImageThree} alt="Auction Item" className="img-fluid" />
+            )}
           </Card>
         </Col>
         <Col md={6}>
           <Card>
             <Card.Body>
-              <Card.Title>RJ Barrett New York Knicks 2023-2024 Game Worn Statement Edition Jersey</Card.Title>
-              
+              <Card.Title>Girlfren ID #{auctionData?.girlfrenId || '0'}</Card.Title>
               <Badge bg="success" className="mb-3">No reserve</Badge>
-              
               <div className="lot-details" style={{ margin: "5px" }}>
                 <span>Lot closes</span> <br />
-                <span>20:48:51 • January 25, 02:02 PM EST</span>
+                {auctionNotStarted ? (
+                  // TODO: Handle end of auction
+                  <span><i>Auction {`hasn't`} started yet. Bid now to start the auction for the next token</i></span>
+                ) : (
+                  <span>{auctionData?.endTime}</span> // endTime is already formatted
+                )}
               </div>
-
               <div className='line' />
               <div className="auction-estimate mb-2" style={{ margin: "5px" }}>
                 <span>Estimate</span><br />
-                <span>2,000 - 5,000 USD</span>
+                <span>{`${auctionData?.reservePrice || '0.1'} - 1 ETH`}</span>
               </div>
               <div className='line' />
-
               <div className="current-bid mb-2" style={{ margin: "5px" }}>
                 <span>Current Bid</span> <br />
-                <span> 1,000 USD <Badge bg="secondary">12 Bids</Badge></span>
+                <span>{`${auctionData?.amount || '0.1'} ETH`} <Badge bg="secondary">12 Bids</Badge></span>
               </div>
               <div className='line' />
-              
               <ConnectWalletOrBid />
             </Card.Body>
           </Card>
@@ -55,8 +72,8 @@ function Auction() {
 
 function ConnectWalletOrBid() {
   const { isConnected } = useAccount()
-  
-  if(isConnected) {
+
+  if (isConnected) {
     return (
       <AuctionBidButton />
     )

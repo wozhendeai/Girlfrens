@@ -1,50 +1,47 @@
-import { Button, Form, InputGroup } from "react-bootstrap"
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"
-import {abi, address} from "../../contractConfig.js";
-
-// CSS
-import "./AuctionBidButton.css";
+import { useState } from 'react';
+import { Button, Form, InputGroup } from "react-bootstrap";
+import useBidOnAuction from '../../hooks/useBidOnAuction';
+import useAuctionData from '../../hooks/useAuctionData';
+import { parseEther } from 'viem';
 
 function AuctionBidButton() {
-    const {
-        data: hash,
-        error,
-        isPending,
-        writeContract
-    } = useWriteContract()
-
-    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash })
+    const [bidAmount, setBidAmount] = useState('');
+    const { bid, error, isBidding, isConfirming } = useBidOnAuction();
+    const { auctionData, isLoading: isLoadingAuctionData, error: auctionDataError } = useAuctionData();
 
     async function handleOnClick(e) {
-        e.preventDefault()
-        writeContract({
-            address: address,
-            abi: abi,
-            functionName: 'createBid',
-            args: [ 1 ], // TODO: Fetch latest tokenId
-        })
+        e.preventDefault();
+        if (!auctionData || !bidAmount) return;
+        
+        // If auction hasn't started or is settled but next auction hasn't started, we add one to girlfren id
+        if(auctionData.girlfrenId == 0 || auctionData.endTime == null) {
+            auctionData.girlfrenId = 1;
+        }
+
+        bid(auctionData.girlfrenId, parseEther(bidAmount));
     }
 
-    return (<>
-        <InputGroup className="mb-3">
-            <Form.Control
-                placeholder={"Enter bid".toUpperCase()}
-                aria-label="Enter bid"
-                aria-describedby="basic-addon2"
-                disabled={isPending}
-            />
-            <Button variant="outline-secondary" id="button-addon2" onClick={handleOnClick}>
-                Place Bid
-            </Button>
-        </InputGroup>
-        {/* TODO: Use notifications instead */}
-        {isConfirming && <div>Waiting for confirmation...</div>}
-        {isConfirmed && <div>Transaction confirmed.</div>}
-        {error && (
-            <div>Error: {(error).shortMessage || error.message}</div>
-        )}
-    </>
-    )
+    return (
+        <>
+            <InputGroup className="mb-3">
+                <Form.Control
+                    placeholder="Enter bid (ETH)"
+                    aria-label="Enter bid"
+                    aria-describedby="basic-addon2"
+                    value={bidAmount}
+                    onChange={(e) => setBidAmount(e.target.value)}
+                    disabled={isBidding || isConfirming || isLoadingAuctionData}
+                />
+                <Button variant="outline-secondary" id="button-addon2" onClick={handleOnClick} disabled={isBidding || isConfirming || isLoadingAuctionData}>
+                    Place Bid
+                </Button>
+            </InputGroup>
+            {isLoadingAuctionData && <div>Loading auction data...</div>}
+            {isConfirming && <div>Waiting for confirmation...</div>}
+            {error && <div>Error: {error.message}</div>}
+            {auctionDataError && <div>Error fetching auction data: {auctionDataError.message}</div>}
+        </>
+    );
 }
 
-export default AuctionBidButton
+export default AuctionBidButton;
