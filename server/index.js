@@ -21,7 +21,6 @@ setupEventListeners()
 
 // Perform an immediate check for missed bids at startup
 checkMissedBids()
-  .then(() => console.log('Initial check for missed bids completed.'))
   .catch(err => console.error('Initial check for missed bids failed:', err));
 
 // Schedule checks for missed bids to run every 30 minutes

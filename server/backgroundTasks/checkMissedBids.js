@@ -8,13 +8,12 @@ async function checkMissedBids() {
   const auctionContract = await getAuctionContract();
   const filter = auctionContract.filters.AuctionBid();
 
-  // TODO: Receive from contract
-  const fromBlock = 0;
-  const toBlock = 'latest';
+  // TODO: Track from blocks ago
+  const fromBlock = -10000;
 
   let missedBids = 0;
   try {
-    const events = await auctionContract.queryFilter(filter, fromBlock, toBlock);
+    const events = await auctionContract.queryFilter(filter, fromBlock);
 
     for (const event of events) {
       const { girlfrenId, bidder, amount, extended } = event.args;
@@ -23,16 +22,16 @@ async function checkMissedBids() {
       const existingBid = await prisma.bid.findFirst({
         where: {
           auction: {
-            tokenId: girlfrenId.toNumber(),
+            tokenId: Number(girlfrenId),
           },
           bidder: bidder,
-          amount: parseFloat(ethers.formatEther(amount)),
+          amount: amount.toString(),
         },
       });
 
       // If the bid does not exist, create it
       if (!existingBid) {
-        await createBid(girlfrenId, bidder, amount, extended);
+        await createBid(amount, bidder, girlfrenId, extended);
         missedBids++;
       }
     }
