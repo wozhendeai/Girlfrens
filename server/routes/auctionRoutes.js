@@ -13,7 +13,7 @@ router.get('/current-token', async (req, res) => {
     res.json(response);
   } catch (error) {
     console.log(error);
-    // TODO: Error handling
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

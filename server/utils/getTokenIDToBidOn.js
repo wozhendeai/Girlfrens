@@ -8,17 +8,14 @@ async function getTokenIDToBidOn() {
 
     try {
         const auctionContract = await getAuctionContract();
-        const auctionData = await auctionContract.auctionData();
+        const auctionData = await auctionContract.auctionData(); // TODO: create getAuctionData function
 
+        // Get times
         const startTime = Number(auctionData.startTime) * 1000;
         const endTime = Number(auctionData.endTime) * 1000;
         const currentTime = Date.now();
 
-        if (startTime === 0) {
-            // Auction hasn't started yet
-            return createResponse(1, false);
-        }
-
+        // Get contract info
         const currentTokenId = Number(auctionData.girlfrenId);
         // const maxSupply = await nftContract.MAX_SUPPLY();
         const maxSupply = 1000;
@@ -39,7 +36,7 @@ async function getTokenIDToBidOn() {
         }
     } catch (error) {
         console.error(error);
-        return "Error retrieving token ID to bid on.";
+        throw new Error("Error retrieving token ID to bid on.");
     }
 }
 
