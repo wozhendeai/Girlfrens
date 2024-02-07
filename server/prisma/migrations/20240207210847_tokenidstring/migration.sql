@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Auction" ALTER COLUMN "tokenId" SET DATA TYPE TEXT;

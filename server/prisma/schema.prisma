@@ -19,7 +19,7 @@ model ContractAddress {
 
 model Auction {
   id        Int      @id @default(autoincrement())
-  tokenId   Int      @unique // The ID of the NFT
+  tokenId   String      @unique // The ID of the NFT
   startTime DateTime // Start time of the auction
   endTime   DateTime // End time of the auction
   bids      Bid[]
