@@ -9,9 +9,8 @@ const getBidsForTokenID = require('../utils/getBidsForTokenID');
 // Get the token ID that should be bid on
 router.get('/current-token', async (req, res) => {
   try {
-    const tokenId = await getTokenIDToBidOn();
-    // TODO: better response
-    res.json({ "tokenID": tokenId });
+    const response = await getTokenIDToBidOn();
+    res.json(response);
   } catch (error) {
     console.log(error);
     // TODO: Error handling

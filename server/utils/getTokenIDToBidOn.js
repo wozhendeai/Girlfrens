@@ -1,39 +1,41 @@
 const { getAuctionContract } = require("../getContract");
 
 async function getTokenIDToBidOn() {
+    const createResponse = (tokenId, inProgress) => ({
+        "tokenId": tokenId,
+        "inProgress": inProgress
+    });
+
     try {
         const auctionContract = await getAuctionContract();
         const auctionData = await auctionContract.auctionData();
 
-        const startTime = auctionData.startTime;
-        const endTime = auctionData.endTime;
+        const startTime = Number(auctionData.startTime) * 1000;
+        const endTime = Number(auctionData.endTime) * 1000;
         const currentTime = Date.now();
-
-        console.log(startTime, endTime, currentTime);
 
         if (startTime === 0) {
             // Auction hasn't started yet
-            return 1;
+            return createResponse(1, false);
         }
 
-        const currentTokenId = auctionData.girlfrenId;
+        const currentTokenId = Number(auctionData.girlfrenId);
         // const maxSupply = await nftContract.MAX_SUPPLY();
-        const maxSupply = BigInt(1000);
+        const maxSupply = 1000;
 
         // Check if the current token ID has reached or exceeded max supply
-        if (currentTokenId >= maxSupply) {
+        if (startTime === 0) {
+            // Auction hasn't started yet
+            return createResponse(1, false);
+        } else if (currentTokenId >= maxSupply) {
             // Reached max supply; no more auctions can be created
-            return -1;
+            return createResponse(-1, false);
         } else if (currentTime > endTime) {
-            // Current time is past the auction end time, and not reached max supply
-            // Normally, we'd advance to the next token ID, but let's also check totalSupply
-            if (currentTokenId < maxSupply) {
-                // There's still room for more tokens to be minted/auctioned
-                return currentTokenId + BigInt(1);
-            }
+            // Auction ended, and not at max supply; advance to the next token ID
+            return createResponse(currentTokenId + 1, false);
         } else {
             // Auction is in progress
-            return currentTokenId;
+            return createResponse(currentTokenId, true);
         }
     } catch (error) {
         console.error(error);
