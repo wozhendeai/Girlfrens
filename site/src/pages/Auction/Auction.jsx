@@ -19,16 +19,12 @@ function Auction() {
 
   if (isLoading) return <AuctionLoading />;
 
-  // If the first auction hasn't started
-  // Or if an auction has ended & the next one hasn't been created
-  const auctionNotStarted = auctionData?.startTime == null;
-
   return (
     <Container className="auction-container">
       <Row>
         <Col lg={6} className="mb-4 image-col">
           <Card className="border-0">
-            {auctionNotStarted ? (
+            {!auctionData.inProgress ? (
               <Card.Img src={Blank} alt="Auction Item" className="img-fluid" />
             ) : (
               <Card.Img src={ImageThree} alt="Auction Item" className="img-fluid" />
@@ -38,11 +34,11 @@ function Auction() {
         <Col md={6}>
           <Card>
             <Card.Body>
-              <Card.Title>Girlfren ID #{auctionData?.girlfrenId || '0'}</Card.Title>
+              <Card.Title>Girlfren ID #{auctionData.tokenId || '-1'}</Card.Title>
               <Badge bg="success" className="mb-3">No reserve</Badge>
               <div className="lot-details" style={{ margin: "5px" }}>
                 <span>Lot closes</span> <br />
-                {auctionNotStarted ? (
+                {!auctionData.inProgress ? (
                   // TODO: Handle end of auction
                   <span><i>Auction {`hasn't`} started yet. Bid now to start the auction for the next token</i></span>
                 ) : (
@@ -57,7 +53,11 @@ function Auction() {
               <div className='line' />
               <div className="current-bid mb-2" style={{ margin: "5px" }}>
                 <span>Current Bid</span> <br />
-                <span>{`${auctionData?.amount || '0.1'} ETH`} <Badge bg="secondary">12 Bids</Badge></span>
+                <span>
+                  {`${auctionData?.amount || '0.1'} ETH`}
+                  {/* TODO: Get number of actual bids from server */}
+                  <Badge bg="secondary">12 Bids</Badge>
+                </span>
               </div>
               <div className='line' />
               <ConnectWalletOrBid />

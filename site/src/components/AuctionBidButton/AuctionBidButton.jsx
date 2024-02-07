@@ -2,19 +2,21 @@ import { useState } from 'react';
 import { Button, Form, InputGroup } from "react-bootstrap";
 import { parseEther } from 'viem';
 import useBidOnAuction from '../../hooks/useBidOnAuction';
-import useCurrentTokenId from '../../hooks/useCurrentTokenId';
+import useAuctionData from '../../hooks/useAuctionData';
 
 function AuctionBidButton() {
     const [bidAmount, setBidAmount] = useState('');
     const { bid, error, isBidding, isConfirming } = useBidOnAuction();
-    const { tokenId, loading: isLoadingTokenId, error: tokenIdError } = useCurrentTokenId();
+    const { auctionData, isLoading: isLoadingAuctionData } = useAuctionData();
+
+    const isLoading = isBidding || isConfirming || isLoadingAuctionData;
 
     async function handleOnClick(e) {
         e.preventDefault();
-        if (!tokenId || !bidAmount) return;
+        if (!bidAmount) return;
         
         // Use the tokenId from the hook instead of auctionData
-        bid(tokenId, parseEther(bidAmount));
+        bid(auctionData.tokenId, parseEther(bidAmount));
     }
 
     return (
@@ -26,16 +28,15 @@ function AuctionBidButton() {
                     aria-describedby="basic-addon2"
                     value={bidAmount}
                     onChange={(e) => setBidAmount(e.target.value)}
-                    disabled={isBidding || isConfirming || isLoadingTokenId}
+                    disabled={isLoading}
                 />
-                <Button variant="outline-secondary" id="button-addon2" onClick={handleOnClick} disabled={isBidding || isConfirming || isLoadingTokenId}>
+                <Button variant="outline-secondary" id="button-addon2" onClick={handleOnClick} disabled={isLoading}>
                     Place Bid
                 </Button>
             </InputGroup>
             {isConfirming && <div>Waiting for confirmation...</div>}
             {error && <div>Error: {error.message}</div>}
-            {tokenIdError && <div>Fetch token ID error: {tokenIdError.message}</div>}
-            {tokenId === -1 && <div>Max supply reached. No more auctions available.</div>}
+            {auctionData.tokenId === -1 && <div>Max supply reached. No more auctions available.</div>}
 
         </>
     );
