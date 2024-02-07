@@ -54,7 +54,9 @@ const useAuctionData = () => {
   return { auctionData: formattedData, error, isLoading };
 };
 
-// Helper function to fetch data from the server
+/**
+ * @description Helper function to fetch data from the server
+ */
 const fetchCurrentTokenId = async () => {
   try {
     const endpoint = import.meta.env.VITE_SERVER_URL + '/auction/current-token';
@@ -72,8 +74,14 @@ const fetchCurrentTokenId = async () => {
   }
 };
 
-// If the auction is not in progress, then it will show the highest bid of the last auction.
-// Therefore, lets show reserve price when auction is not in progress
+/**
+ * @description If the auction is not in progress, then it will show the highest bid of the last auction.
+ * Therefore, lets show reserve price when auction is not in progress
+ * @param {bn} amount 
+ * @param {boolean} inProgress 
+ * @param {bn} reservePrice 
+ * @returns Reserve price if auction hasn't started or highest bid amount if auction is in progress
+ */
 const getHighestBid = (amount, inProgress, reservePrice) => {
   if (!inProgress) {
     return formatEther(reservePrice);
@@ -83,6 +91,11 @@ const getHighestBid = (amount, inProgress, reservePrice) => {
   return formatEther(amount);
 }
 
+/**
+ * 
+ * @param {bn} timestamp 
+ * @returns Formatted date
+ */
 const formatDate = (timestamp) => {
   if (!timestamp) {
     return null; // Return null or a sensible default
@@ -98,6 +111,11 @@ const formatDate = (timestamp) => {
   return `${formattedTime} • ${formattedDate}`;
 };
 
+/**
+ * 
+ * @param {bn} bn Value in WEI 
+ * @returns Wei value converted to ether as a string
+ */
 const formatEther = (bn) => {
   return formatUnits(bn, 18);
 }
