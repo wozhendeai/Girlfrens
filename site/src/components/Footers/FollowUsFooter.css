@@ -39,6 +39,9 @@
     .follow-us-content {
         justify-content: center;
         /* Center content on small screens */
+        gap: 1px;
+        /* Adjust gap for smaller screens if necessary */
+        width: 100%;
     }
 
     .follow-us-text {

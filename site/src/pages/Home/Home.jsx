@@ -4,7 +4,16 @@ import MainFooter from '../../components/Footers/MainFooter';
 import FollowUsFooter from '../../components/Footers/FollowUsFooter';
 import "./Home.css";
 
-function Home() {  
+function Home() {
+  const auctions = [
+    { tokenId: 1 },
+    { tokenId: 2 },
+    { tokenId: 3 },
+    { tokenId: 4 },
+    { tokenId: 5 },
+    // more auctions...
+  ];
+
   return (
     <div className='home-container'>
       {/* Carousel Component */}
@@ -14,12 +23,14 @@ function Home() {
       <div className="live-auction-header-container">
         <h2>Auctions</h2>
       </div>
-      {/* Current Auction Card */}
+      
       {/* Auction List */}
       <div className="auction-list-container">
-          <div className="auction-card-container">
-            <AuctionCard />
+        {auctions.map((auction, index) => (
+          <div key={index} className="auction-card-container">
+            <AuctionCard {...auction} />
           </div>
+        ))}
       </div>
       
       {/* Footer */}

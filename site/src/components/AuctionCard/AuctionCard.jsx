@@ -3,11 +3,11 @@ import { Card, Button } from 'react-bootstrap';
 import ImageOne from "/Carousel/1.svg";
 import './AuctionCard.css';
 
-function AuctionCard() {
+// TODO: Take token ID and get info about it
+// eslint-disable-next-line react/prop-types
+function AuctionCard({ tokenId }) {
 
     // Current token id being bid on
-    // TODO: Grab from contract
-    const [tokenId, ] = useState(Math.floor(Math.random() * 1000));
 
     // Current auction end date [excluding possible time buffer]
     // TODO: Grab from contract
