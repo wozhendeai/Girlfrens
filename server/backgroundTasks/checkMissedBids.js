@@ -13,7 +13,7 @@ async function checkMissedBids() {
 
   let missedBids = 0;
   try {
-    const events = await auctionContract.queryFilter(filter, fromBlock);
+    const events = await auctionContract.queryFilter(filter, fromBlock, "latest");
 
     for (const event of events) {
       const { girlfrenId, bidder, amount, extended } = event.args;
