@@ -19,16 +19,17 @@ setupEventListeners()
   .then(() => console.log('Event listeners are set up.'))
   .catch((error) => console.error('Error setting up event listeners:', error));
 
+// TODO: FIX
 // Perform an immediate check for missed bids at startup
-checkMissedBids()
-  .catch(err => console.error('Initial check for missed bids failed:', err));
+// checkMissedBids()
+//   .catch(err => console.error('Initial check for missed bids failed:', err));
 
 // Schedule checks for missed bids to run every 30 minutes
-cron.schedule('*/30 * * * *', () => {
-  console.log('Checking for missed bids...');
-  checkMissedBids()
-    .catch(err => console.error('Check for missed bids failed:', err));
-});
+// cron.schedule('*/30 * * * *', () => {
+//   console.log('Checking for missed bids...');
+//   checkMissedBids()
+//     .catch(err => console.error('Check for missed bids failed:', err));
+// });
 
 // Use the contracts router for all requests to /contracts
 app.use('/contracts', contractRoutes);
