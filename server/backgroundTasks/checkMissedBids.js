@@ -9,7 +9,7 @@ async function checkMissedBids() {
   const filter = auctionContract.filters.AuctionBid();
 
   // TODO: Track from blocks ago
-  const fromBlock = -10000;
+  const fromBlock = -9990;
 
   let missedBids = 0;
   try {

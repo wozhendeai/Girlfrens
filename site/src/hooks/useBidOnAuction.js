@@ -1,4 +1,3 @@
-// useBidOnAuction.js
 import { useWriteContract } from 'wagmi';
 import { abi, config } from '../contractConfig'; // Ensure paths are correct
 import { blastSepolia } from 'viem/chains'; // Ensure paths are correct
@@ -7,8 +6,7 @@ const useBidOnAuction = () => {
     const { writeContract, data, error, isLoading } = useWriteContract();
 
     const bid = async (tokenId, bidAmount) => {        
-        // TODO: Use writeContractAsync for an async/await pattern
-        
+
         return writeContract({
             address: config.girlfrenAuction,
             abi: abi.abi,
