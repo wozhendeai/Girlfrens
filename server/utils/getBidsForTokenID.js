@@ -1,11 +1,13 @@
 const prisma = require("../prismaClient");
 
 async function getBidsForTokenID(tokenId) {
+    tokenId = String(tokenId);
+
     try {
         const bids = await prisma.bid.findMany({
             where: {
                 auction: {
-                    tokenId: parseInt(tokenId),
+                    tokenId: tokenId,
                 },
             },
             include: {
