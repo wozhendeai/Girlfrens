@@ -9,12 +9,11 @@ const ethers = require('ethers');
  */
 async function createOrUpdateAuction(girlfrenId, startTime, endTime) {
     // Convert types
-    girlfrenId = Number(girlfrenId);
 
     try {
         // First, check if the Auction record already exists
         const auction = await prisma.auction.findUnique({
-            where: { tokenId: parseInt(girlfrenId.toString()) },
+            where: { tokenId: girlfrenId.toString() },
         });
 
         if (auction) {

@@ -35,12 +35,11 @@ function Auction() {
           <Card>
             <Card.Body>
               <Card.Title>Girlfren ID #{auctionData.tokenId || '-1'}</Card.Title>
-              <Badge bg="success" className="mb-3">No reserve</Badge>
               <div className="lot-details" style={{ margin: "5px" }}>
                 <span>Lot closes</span> <br />
                 {!auctionData.inProgress ? (
                   // TODO: Handle end of auction
-                  <span><i>Auction {`hasn't`} started yet. Bid now to start the auction for the next token</i></span>
+                  <span><i>Auction {`hasn't`} started yet.</i></span>
                 ) : (
                   <span>{auctionData?.endTime}</span> // endTime is already formatted
                 )}
@@ -54,9 +53,16 @@ function Auction() {
               <div className="current-bid mb-2" style={{ margin: "5px" }}>
                 <span>Current Bid</span> <br />
                 <span>
-                  {`${auctionData?.amount || '0.1'} ETH`}
-                  {/* TODO: Get number of actual bids from server */}
-                  <Badge bg="secondary">12 Bids</Badge>
+                  {!auctionData.inProgress ? (
+                    // TODO: Handle end of auction
+                    <span><i>Auction {`hasn't`} started yet. Bid now to start the auction for the next token</i></span>
+                  ) : (
+                    <>
+                      <span>{auctionData?.amount}</span>
+                      {/* TODO: Get number of actual bids from server */}
+                      <Badge bg="primary">12 Bids</Badge>
+                    </>
+                  )}
                 </span>
               </div>
               <div className='line' />
