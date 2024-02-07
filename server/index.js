@@ -1,5 +1,6 @@
 const express = require('express');
 const cron = require('node-cron');
+var cors = require('cors')
 
 // Routes
 const checkMissedBids = require('./backgroundTasks/checkMissedBids');
@@ -10,6 +11,7 @@ const setupEventListeners = require('./backgroundTasks/trackBids.js');
 const app = express();
 
 // Middleware
+app.use(cors())
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;

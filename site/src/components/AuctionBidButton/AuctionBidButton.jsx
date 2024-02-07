@@ -7,7 +7,7 @@ import useCurrentTokenId from '../../hooks/useCurrentTokenId';
 function AuctionBidButton() {
     const [bidAmount, setBidAmount] = useState('');
     const { bid, error, isBidding, isConfirming } = useBidOnAuction();
-    const { tokenId, loading: isLoadingTokenId, error: tokenIdError } = useCurrentTokenId(); // Use the hook
+    const { tokenId, loading: isLoadingTokenId, error: tokenIdError } = useCurrentTokenId();
 
     async function handleOnClick(e) {
         e.preventDefault();
@@ -34,7 +34,7 @@ function AuctionBidButton() {
             </InputGroup>
             {isConfirming && <div>Waiting for confirmation...</div>}
             {error && <div>Error: {error.message}</div>}
-            {tokenIdError && <div>Error: {tokenIdError.message}</div>}
+            {tokenIdError && <div>Fetch token ID error: {tokenIdError.message}</div>}
             {tokenId === -1 && <div>Max supply reached. No more auctions available.</div>}
 
         </>
