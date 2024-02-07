@@ -22,7 +22,7 @@ router.get('/:name', async (req, res) => {
   const contractAddress = await getContractAddress(name);
 
   if (contract) {
-    res.json(contractAddress);
+    res.json({ "contractAddress": contractAddress });
   } else {
     res.status(404).json({ message: "Contract not found" });
   }

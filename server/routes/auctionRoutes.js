@@ -11,7 +11,7 @@ router.get('/current-token', async (req, res) => {
   try {
     const tokenId = await getTokenIDToBidOn();
     // TODO: better response
-    res.json({ tokenId });
+    res.json({ "tokenID": tokenId });
   } catch (error) {
     console.log(error);
     // TODO: Error handling
