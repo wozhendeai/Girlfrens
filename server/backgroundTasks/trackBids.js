@@ -1,6 +1,6 @@
 const { getAuctionContract } = require("../getContract");
 const createBid = require('./utils/createBid');
-const createAuction = require('./utils/createAuction');
+const {createOrUpdateAuction} = require('./utils/createAuction');
 
 async function setupEventListeners() {
     const auctionContract = await getAuctionContract();
@@ -8,7 +8,7 @@ async function setupEventListeners() {
     auctionContract.on('AuctionBid', async (girlfrenId, bidder, amount, extended) => {
         try {
             // Create bid
-            await createBid(girlfrenId, bidder, amount, extended);
+            await createBid(amount, bidder, girlfrenId, extended);
         } catch (error) {
             // TODO: Better errors
             console.error(error);
@@ -19,7 +19,7 @@ async function setupEventListeners() {
     auctionContract.on('AuctionCreated', async (girlfrenId, startTime, endTime) => {
         try {
             // Create auction
-            await createAuction(girlfrenId, startTime, endTime);
+            await createOrUpdateAuction(girlfrenId, startTime, endTime);
         } catch (error) {
             // TODO: Better errors
             console.error(error);

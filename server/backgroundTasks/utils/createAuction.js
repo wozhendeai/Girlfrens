@@ -1,7 +1,16 @@
 const prisma = require('../../prismaClient');
 const ethers = require('ethers');
 
+/**
+ * 
+ * @param {bn} girlfrenId Token ID for NFT being auctioned 
+ * @param {bn} startTime Unix timestamp of end time of auction
+ * @param {bn} endTime Unix timestamp for end time of auction
+ */
 async function createOrUpdateAuction(girlfrenId, startTime, endTime) {
+    // Convert types
+    girlfrenId = Number(girlfrenId);
+
     try {
         // First, check if the Auction record already exists
         const auction = await prisma.auction.findUnique({
@@ -28,7 +37,7 @@ async function createOrUpdateAuction(girlfrenId, startTime, endTime) {
             }
         } else {
             // If the Auction doesn't exist, create it
-            const newAuction = await createAuction(parseInt(girlfrenId.toString()), new Date(startTime), new Date(endTime));
+            const newAuction = await createAuction(girlfrenId, new Date(startTime), new Date(endTime));
             console.log("Auction stored in the database:", newAuction);
         }
     } catch (error) {
