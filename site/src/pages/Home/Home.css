@@ -1,11 +1,34 @@
+.home-container {
+    max-width: 60%;
+    margin: auto;
+
+}
+
 .live-auction-header-container {
-    text-align: center;
-    padding: 20px 0;
+    text-align: left;
+    /* Adjust as needed for your layout */
+}
+
+.auction-list-container {
+    display: flex;
+    flex-direction: column;
+    /* Use 'row' if you want a horizontal list */
+    align-items: flex-start;
+    /* Aligns children (cards) to the start of the cross axis, which is left for column direction */
+    margin: 20px;
+    /* Spacing around the entire container */
+}
+
+.auction-card-container {
+    /* Style for the container of individual auction cards */
+    margin-bottom: 20px;
+    /* Spacing between cards */
+    /* Add more styles as needed */
 }
 
 @media only screen and (min-width: 1024px) {
     .live-auction-header-container h2 {
         font-size: 2.5em;
         margin-bottom: 32px;
-    }    
+    }
 }

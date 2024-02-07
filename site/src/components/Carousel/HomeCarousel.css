@@ -1,35 +1,43 @@
 .carousel-container {
-    max-width: 60%;
-    margin: auto; /* This will center your carousel */
-    padding: 20px 0; /* Add some padding at the top and bottom */
-  }
-  
-  .carousel .carousel-item {
-    overflow: hidden;
-    position: relative; /* Added to position caption absolutely */
-  }
-  
+  /* max-width: 60%;
+  margin: auto; */
+  /* This will center your carousel */
+  padding: 20px 0;
+  /* Add some padding at the top and bottom */
+}
+
+.carousel .carousel-item {
+  overflow: hidden;
+  position: relative;
+  /* Added to position caption absolutely */
+}
+
+.carousel .carousel-item img {
+  width: 100%;
+  /* This will ensure the image covers the width */
+  max-height: 500px;
+  /* Maximum height for large screens */
+  object-fit: contain;
+  /* Ensures image is fully visible */
+  margin: auto;
+  /* Center the image in the item */
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
   .carousel .carousel-item img {
-    width: 100%; /* This will ensure the image covers the width */
-    max-height: 500px; /* Maximum height for large screens */
-    object-fit: contain; /* Ensures image is fully visible */
-    margin: auto; /* Center the image in the item */
+    height: 50vh;
+    /* Adjust the percentage as needed */
+    object-fit: contain;
   }
-  
-  /* For smaller screens */
-  @media (max-width: 768px) {
-    .carousel .carousel-item img {
-      height: 50vh; /* Adjust the percentage as needed */
-      object-fit: contain;
-    }
-  }
-  
-  /* Optional: Style for the carousel caption */
-  .carousel-caption {
-    position: absolute;
-    bottom: 20px; /* Adjust as needed */
-    left: 50%;
-    transform: translateX(-50%);
-    color: #fff;
-  }
-  
+}
+
+/* Optional: Style for the carousel caption */
+.carousel-caption {
+  position: absolute;
+  bottom: 20px;
+  /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+}
