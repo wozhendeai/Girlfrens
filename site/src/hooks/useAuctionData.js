@@ -25,7 +25,6 @@ const useAuctionData = () => {
       setTokenId(data.tokenId);
       setInProgress(data.inProgress);
       setTokenLoading(false);
-      console.log(`Auction data:`, data)
     }).catch(error => {
       setTokenError(error);
       setTokenLoading(false);

@@ -1,4 +1,5 @@
 import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom';
 import { useAccount, useConnect, useSwitchChain } from 'wagmi';
 import { useEffect } from 'react';
 import { blastSepolia } from '@wagmi/core/chains';
@@ -36,7 +37,14 @@ function ConnectWalletButton({ variant, size, text, isButton = true }) {
       </Button>
     );
   } else {
-    return <span onClick={handleConnectAndSwitch}>{isConnected ? "CONNECTED" : text}</span>;
+    // Correctly use Link component when not rendering as a button
+    return isConnected ? (
+      <Link to="/manage" className="link-style">
+        MANAGE
+      </Link>
+    ) : (
+      <span onClick={handleConnectAndSwitch}>{text}</span>
+    );
   }
 }
 

@@ -1,4 +1,5 @@
 import abi from "../../contracts/artifacts/contracts/GirlfrenAuction.sol/GirlfrenAuction.json";
+import GirlfrenNFTABI from "../../contracts/artifacts/contracts/GirlfrenNFT.sol/Girlfren.json";
 
 const config = {
     treasuryStrategy: "0x75b1C7c88860c98B52B4C540aE7C2eFDFd5444F1",
@@ -8,4 +9,4 @@ const config = {
 }
 
 
-export { abi, config };
+export { abi, GirlfrenNFTABI, config };

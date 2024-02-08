@@ -12,6 +12,7 @@ import config from './wagmiConfig.js'
 import Home from './pages/Home/Home.jsx'
 import Auction from './pages/Auction/Auction.jsx';
 import PageNotFound from './pages/PageNotFound/PageNotFound.jsx'
+import Manage from './pages/Manage/Manage.jsx';
 import Root from './components/Root/Root.jsx';
 
 // CSS
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "auction",
         element: <Auction />
+      },
+      {
+        path: "manage",
+        element: <Manage />
       }
     ]
   },
