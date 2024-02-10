@@ -6,30 +6,36 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model LastCheckedBlock {
+  id          Int @id @default(1)
+  blockNumber Int
 }
 
 model ContractAddress {
-  id                Int      @id @default(autoincrement())
-  name              String   @unique // A name to identify the contract, e.g., "treasuryStrategy"
-  address           String   // The contract address
-  updatedAt         DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // A name to identify the contract, e.g., "treasuryStrategy"
+  address   String // The contract address
+  updatedAt DateTime @updatedAt
 }
 
 model Auction {
   id        Int      @id @default(autoincrement())
-  tokenId   String      @unique // The ID of the NFT
+  tokenId   String   @unique // The ID of the NFT
   startTime DateTime // Start time of the auction
   endTime   DateTime // End time of the auction
   bids      Bid[]
 }
 
 model Bid {
-  id       Int      @id @default(autoincrement())
-  amount   String    // The bid amount
-  bidder   String   // Address of the bidder
-  extended Boolean  // Whether bid extended auction
-  auction  Auction  @relation(fields: [auctionId], references: [id])
+  id        Int     @id @default(autoincrement())
+  amount    String // The bid amount
+  bidder    String // Address of the bidder
+  extended  Boolean // Whether bid extended auction
+  auction   Auction @relation(fields: [auctionId], references: [id])
   auctionId Int
 }

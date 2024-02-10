@@ -37,7 +37,7 @@
                     auctionId: auction.id, // Token ID = Auction ID
                 },
             });
-            console.log("Bid stored in the database:", bid);
+            // console.log("Bid stored in the database:", bid);
         } catch (error) {
             console.error("Error storing bid:", error);
         }
