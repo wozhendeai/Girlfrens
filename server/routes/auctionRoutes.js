@@ -18,7 +18,7 @@ router.get('/current-token', async (req, res) => {
 });
 
 // Get all bids for a token ID
-router.get('/:tokenId/bids', async (req, res) => {
+router.get('/bids/tokenId/:tokenId', async (req, res) => {
   const { tokenId } = req.params;
   try {
     const bids = await getBidsForTokenID(tokenId);
@@ -26,6 +26,27 @@ router.get('/:tokenId/bids', async (req, res) => {
     res.json({ bids });
   } catch (error) {
     console.error(error);
+  }
+});
+
+// Get all bids placed by a specific bidder address
+router.get('/bids/address/:bidderAddress', async (req, res) => {
+  const { bidderAddress } = req.params;
+  console.log(bidderAddress)
+  try {
+    const bids = await prisma.bid.findMany({
+      where: {
+        bidder: bidderAddress,
+      },
+      include: {
+        auction: true, // Include related auction data
+      },
+    });
+    console.log(`Bids found: ${bids.length} for ${bidderAddress}`);
+    res.json(bids);
+  } catch (error) {
+    console.error('Failed to get bids for bidder:', error);
+    res.status(500).json({ error: 'Failed to get bids for bidder' });
   }
 });
 

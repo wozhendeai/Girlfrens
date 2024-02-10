@@ -23,8 +23,8 @@ setupEventListeners()
 
 // TODO: FIX
 // Perform an immediate check for missed bids at startup
-// checkMissedBids()
-//   .catch(err => console.error('Initial check for missed bids failed:', err));
+checkMissedBids()
+  .catch(err => console.error('Initial check for missed bids failed:', err));
 
 // Schedule checks for missed bids to run every 30 minutes
 // cron.schedule('*/30 * * * *', () => {

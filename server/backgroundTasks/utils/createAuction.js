@@ -8,35 +8,35 @@ const ethers = require('ethers');
  * @param {bn} endTime Unix timestamp for end time of auction
  */
 async function createOrUpdateAuction(girlfrenId, startTime, endTime) {
-    // Convert types
+    girlfrenId = girlfrenId.toString(); // Assuming girlfrenId is a BigNumber and needs to be a string
+    // Convert startTime and endTime from BigInt to Date
+    startTime = new Date(Number(startTime) * 1000); // Convert seconds to milliseconds
+    endTime = new Date(Number(endTime) * 1000); // Convert seconds to milliseconds
 
     try {
-        // First, check if the Auction record already exists
         const auction = await prisma.auction.findUnique({
-            where: { tokenId: girlfrenId.toString() },
+            where: { tokenId: girlfrenId },
         });
 
         if (auction) {
-            // If auction record exists and has placeholder values, update it
             const placeholderDate = new Date(0);
-            if (
-                auction.startTime.getTime() === placeholderDate.getTime()
-                && auction.endTime.getTime() === placeholderDate.getTime()
-            ) {
+            if (auction.startTime.getTime() === placeholderDate.getTime() && auction.endTime.getTime() === placeholderDate.getTime()) {
                 const updatedAuction = await prisma.auction.update({
-                    where: { tokenId },
-                    data: {
-                        startTime: new Date(startTime),
-                        endTime: new Date(endTime),
-                    },
+                    where: { tokenId: girlfrenId },
+                    data: { startTime, endTime },
                 });
                 console.log("Auction updated in the database:", updatedAuction);
             } else {
                 console.log("Auction already exists with valid times, no update needed.");
             }
         } else {
-            // If the Auction doesn't exist, create it
-            const newAuction = await createAuction(girlfrenId, new Date(startTime), new Date(endTime));
+            const newAuction = await prisma.auction.create({
+                data: {
+                    tokenId: girlfrenId,
+                    startTime,
+                    endTime,
+                },
+            });
             console.log("Auction stored in the database:", newAuction);
         }
     } catch (error) {
@@ -46,19 +46,19 @@ async function createOrUpdateAuction(girlfrenId, startTime, endTime) {
 
 // TODO: Comments
 async function createAuction(girlfrenId, startTime, endTime) {
+    // Assuming the parameters are already converted to the correct types in createOrUpdateAuction
     try {
         const auction = await prisma.auction.create({
             data: {
-                tokenId: girlfrenId,
-                startTime: new Date(startTime),
-                endTime: new Date(endTime),
+                tokenId: girlfrenId.toString(), // Ensure tokenId is a string
+                startTime,
+                endTime,
             },
         });
         return auction;
     } catch (error) {
         console.error('Error creating auction:', error);
     }
-
 }
 
 module.exports = { createAuction, createOrUpdateAuction };
