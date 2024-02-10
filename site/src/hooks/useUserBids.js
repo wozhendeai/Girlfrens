@@ -17,7 +17,7 @@ export const useUserBids = () => {
         amount: formatEther(bid.amount), // Convert amount from Wei to Ether
         startTime: new Date(bid.auction.startTime).toLocaleString(),
         endTime: new Date(bid.auction.endTime).toLocaleString(),
-        // Additional formatting logic can be placed here
+        isSuccessful: false
     }));
 
     useEffect(() => {
