@@ -1,4 +1,4 @@
-import { Container, Row, Col, Card, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Table } from 'react-bootstrap';
 import ConnectWalletButton from '../../components/ConnectWalletButton/ConnectWalletButton';
 import AuctionLoading from './AuctionLoading';
 
@@ -18,10 +18,10 @@ function Auction() {
   const { auctionData, isLoading } = useAuctionData();
 
   if (isLoading) return <AuctionLoading />;
-
   return (
     <Container className="auction-container">
       <Row>
+        {/* Auction image */}
         <Col lg={6} className="mb-4 image-col">
           <Card className="border-0">
             {!auctionData.inProgress ? (
@@ -32,6 +32,7 @@ function Auction() {
           </Card>
         </Col>
         <Col md={6}>
+          {/* Auction details */}
           <Card>
             <Card.Body>
               <Card.Title>Girlfren ID #{auctionData.tokenId || '-1'}</Card.Title>
@@ -59,14 +60,44 @@ function Auction() {
                   ) : (
                     <>
                       <span>{auctionData?.amount}</span>
-                      {/* TODO: Get number of actual bids from server */}
-                      <Badge bg="primary">12 Bids</Badge>
+                      <Badge bg="primary">{auctionData && auctionData.bids.length} Bids</Badge>
                     </>
                   )}
                 </span>
               </div>
               <div className='line' />
               <ConnectWalletOrBid />
+            </Card.Body>
+          </Card>
+          {/* Bid table */}
+          <Card className="flex-grow-1 bid-history-card">
+            <Card.Body className="bid-history-body">
+              <Card.Title>Bid History</Card.Title>
+              {/* Add a div with 'bid-history-table' class to contain the table */}
+              <div className="bid-history-table">
+                {isLoading ? (
+                  <div>Loading bids...</div>
+                ) : (
+                  <Table striped bordered hover size="sm">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Amount (ETH)</th>
+                      <th>TX Hash</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {auctionData.bids && auctionData.bids.map((bid, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{bid.amount}</td>
+                        <td>hash</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                )}
+              </div>
             </Card.Body>
           </Card>
         </Col>

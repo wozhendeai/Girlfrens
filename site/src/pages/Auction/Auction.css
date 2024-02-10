@@ -1,88 +1,102 @@
 /* Auction.css */
 .auction-container {
     margin-top: 50px;
-    /* Add more margin to the top for vertical centering */
     display: flex;
     justify-content: center;
-    /* Center the card horizontally */
     min-height: 80vh;
-    /* Increase the height so that the card is more centered vertically */
 }
 
 .auction-container .row {
     width: 100%;
-    /* Adjust this to set how wide you want the card to be */
 }
 
 .auction-container .card {
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
-    /* Add space below the card */
     width: 100%;
-    /* Make card full width to utilize the space */
 }
 
+/* Adjust the image card container */
+.auction-container .image-col .card {
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Remove padding if not needed */
+    align-items: center; /* Center the content */
+}
+
+/* Adjust the image to fit the container */
 .auction-container .card-img-top {
-    height: 400px;
-    /* Increase fixed height for the image */
-    object-fit: cover;
+    max-width: 100%; /* Image can be as wide as its container */
+    height: auto; /* Height is automatic to maintain aspect ratio */
     background: #ececec;
 }
 
+/* Adjust the card body for details */
 .auction-container .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    /* Adds space between flex items */
+    justify-content: space-between; /* Distribute space between items */
     padding: 20px;
-    /* Increase padding inside the card body */
 }
 
 .auction-container .card-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.5rem; /* Set the size of the auction title */
+    margin-bottom: 1rem; /* Add some space below the title */
+    font-weight: bold; /* Make the title text bold */
 }
 
 .auction-container .badge {
-    display: inline-block;
-    /* Make the badge only as wide as its content */
-    padding: 0.5em 0.75em;
-    /* Add padding inside the badge */
+    display: inline-block; /* Ensure the badge flows with the text */
+    padding: 0.5em 0.75em; /* Add some padding inside the badge */
+    background-color: #007bff; /* Background color of the badge */
+    color: white; /* Text color of the badge */
+    border-radius: 0.25rem; /* Rounded corners for the badge */
+    margin-left: 0.5rem; /* Space between badge and preceding text or element */
 }
 
 .auction-container .btn-primary {
-    padding: 0.75rem 1rem;
-    /* Increase padding for a larger button */
-    font-size: 1.2rem;
-    margin-top: 1rem;
-    /* Add space above the button */
+    padding: 0.75rem 1rem; /* Padding inside the button to make it larger */
+    font-size: 1.2rem; /* Size of the text within the button */
+    color: white; /* Text color of the button */
+    background-color: #007bff; /* Background color of the button */
+    border: none; /* Remove the border for a cleaner look */
+    border-radius: 0.25rem; /* Rounded corners for the button */
+    margin-top: 1rem; /* Space above the button */
+    cursor: pointer; /* Cursor to indicate the button is clickable */
+    transition: background-color 0.15s ease-in-out; /* Smooth transition for hover effect */
 }
 
-.line {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    background-color: rgb(206, 206, 206);
-    height: 1px;
-    margin-top: 8px;
-}  
+.auction-container .btn-primary:hover {
+    background-color: #0056b3; /* Darken the button on hover for feedback */
+}
+
+/* Bid history card */
+.bid-history-card {
+    overflow: hidden; /* Hide overflow */
+    margin-top: 1rem;
+}
+
+/* Bid history content */
+.bid-history-body {
+    padding: 0; /* Remove padding if not needed */
+    height: calc(100% - 56px); /* Adjust height to match image minus title and padding */
+    overflow-y: auto; /* Scroll on y-axis */
+}
+
+/* Table container to manage overflow */
+.bid-history-table {
+    overflow-y: auto; /* Scroll on y-axis */
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .auction-container .card-img-top {
-        height: auto;
-    }
-
     .auction-container .card-body {
         padding: 15px;
-        /* Adjust padding for small screens */
     }
 
     .auction-container .btn-primary {
         font-size: 1rem;
-        /* Adjust font size for small screens */
         padding: 0.5rem 1rem;
-        /* Adjust padding for small screens */
     }
 }
