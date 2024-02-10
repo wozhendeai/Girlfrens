@@ -6,15 +6,20 @@
 //      - Unsuccesful bids
 // import Button from "react-bootstrap/Button";
 // import Card from "react-bootstrap/Card";
-import { ManageNFTCard } from "../../components/ManageNFTCard/ManageNFTCard";
+import BidCard from "../../components/BidCard/BidCard";
+import ManageNFTCard from "../../components/ManageNFTCard/ManageNFTCard";
+
+// Hooks
 import useTokensOfOwner from "../../hooks/useTokensOfOwner";
+import { useUserBids } from "../../hooks/useUserBids";
 import "./Manage.css";
 
 function Manage() {
 
+    const { userBids, loading: isUserBidsLoading } = useUserBids(); // Adjusted to destructure directly
     const { tokensOfOwner: ownedTokens, isTokenIdsLoading } = useTokensOfOwner();
 
-    if (isTokenIdsLoading || !ownedTokens) return <div>Loading...</div>;
+    if (isTokenIdsLoading || !ownedTokens || isUserBidsLoading) return <div>Loading...</div>;
 
     return (
         <div className="manage-container">
@@ -33,9 +38,16 @@ function Manage() {
             </div>
 
             {/* Manage Bids */}
-            <h1>
-                Manage Bids
-            </h1>
+            <h1>Manage Bids</h1>
+            <div className="bid-list-container">
+                {userBids && userBids.length > 0 ? (
+                    userBids.map((bid, index) => (
+                        <BidCard key={index} bid={bid} />
+                    ))
+                ) : (
+                    <p>No bids to display.</p>
+                )}
+            </div>
         </div>
     )
 }

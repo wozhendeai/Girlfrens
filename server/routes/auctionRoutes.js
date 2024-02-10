@@ -32,7 +32,6 @@ router.get('/bids/tokenId/:tokenId', async (req, res) => {
 // Get all bids placed by a specific bidder address
 router.get('/bids/address/:bidderAddress', async (req, res) => {
   const { bidderAddress } = req.params;
-  console.log(bidderAddress)
   try {
     const bids = await prisma.bid.findMany({
       where: {
