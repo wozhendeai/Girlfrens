@@ -1,4 +1,4 @@
-const { getAuctionContract } = require("../getContract");
+const getAuctionData = require("./getAuctionData");
 
 async function getTokenIDToBidOn() {
     const createResponse = (tokenId, inProgress) => ({
@@ -7,17 +7,16 @@ async function getTokenIDToBidOn() {
     });
 
     try {
-        const auctionContract = await getAuctionContract();
-        const auctionData = await auctionContract.auctionData(); // TODO: create getAuctionData function
+        const auctionData = await getAuctionData();
 
-        // Get times
-        const startTime = Number(auctionData.startTime) * 1000;
-        const endTime = Number(auctionData.endTime) * 1000;
+        // Get current time
         const currentTime = Date.now();
 
-        // Get contract info
-        const currentTokenId = Number(auctionData.girlfrenId);
-        // const maxSupply = await nftContract.MAX_SUPPLY();
+        // Extract necessary data from auctionData
+        const { startTime, endTime, girlfrenId } = auctionData;
+        const currentTokenId = Number(girlfrenId);
+
+        // TODO: maxSupply = getNFTContract().maxSupply();
         const maxSupply = 1000;
 
         // Check if the current token ID has reached or exceeded max supply

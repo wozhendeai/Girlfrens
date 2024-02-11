@@ -4,6 +4,7 @@ const { getAuctionContract } = require('../getContract.js');
 const createBid = require('./utils/createBid');
 
 // Function to check for missed bids in chunks
+// TODO: Before shutdown, update `lastCheckedBlock` with current block
 async function checkMissedBids() {
   const auctionContract = await getAuctionContract();
   const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
