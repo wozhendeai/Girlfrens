@@ -7,7 +7,7 @@ async function setupEventListeners() {
     auctionContract.on('AuctionBid', async (girlfrenId, bidder, amount, extended, event) => {
         try {
             // Create bid
-            await createBid(amount, bidder, girlfrenId, extended);
+            await createBid(amount, bidder, girlfrenId, extended, event);
         } catch (error) {
             // TODO: Better errors
             console.error(error);

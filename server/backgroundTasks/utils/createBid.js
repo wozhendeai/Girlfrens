@@ -10,7 +10,7 @@ const getAuctionData = require('../../utils/getAuctionData');
  * @param {bigint} girlfrenId NFT ID being bid on
  * @param {boolean} extended Whether bid caused auction to be extended or not
  */
-async function createBid(amount, bidder, girlfrenId, extended) {
+async function createBid(amount, bidder, girlfrenId, extended, event) {
     // Convert types
     amount = amount.toString();
     girlfrenId = BigInt(girlfrenId).toString();
@@ -43,6 +43,8 @@ async function createBid(amount, bidder, girlfrenId, extended) {
                 bidder: bidder,
                 extended: extended,
                 auctionId: auction.id, // Token ID = Auction ID
+                transactionHash: event.log.transactionHash,
+                blockNumber: String(event.log.blockNumber)
             },
         });
     } catch (error) {

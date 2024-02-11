@@ -37,5 +37,7 @@ model Bid {
   bidder    String // Address of the bidder
   extended  Boolean // Whether bid extended auction
   auction   Auction @relation(fields: [auctionId], references: [id])
+  transactionHash String @default("0")
+  blockNumber String @default("0")
   auctionId Int
 }
