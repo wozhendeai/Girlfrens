@@ -21,7 +21,7 @@ function Home() {
 
       {/* Live Auction Header */}
       <div className="live-auction-header-container">
-        <h2>Auctions</h2>
+        <h2>Past Auctions</h2>
       </div>
       
       {/* Auction List */}

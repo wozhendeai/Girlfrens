@@ -13,9 +13,8 @@ function CustomNavbar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Link as={Link} to="/auction">AUCTIONS</Nav.Link>
+            <Nav.Link as={Link} to="/auction">CURRENT AUCTION</Nav.Link>
             {/* TODO: Implement dropdown to NFT marketplaces */}
-            <Nav.Link>BUY NOW</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

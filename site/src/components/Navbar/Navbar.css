@@ -1,33 +1,44 @@
 .custom-navbar {
     background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .custom-navbar .navbar-brand {
-    font-weight: bold;
+    font-weight: 700; /* Slightly bolder for better visibility */
     color: #333;
-    font-size: 2rem;
-    /* Set the color to match your brand */
+    font-size: 1.75rem; /* Adjust size to your preference */
 }
 
 .custom-navbar .nav-link,
 .custom-navbar .navbar-toggler {
     color: #555;
-    /* Adjust the color for the links and toggler */
 }
 
 .custom-navbar .navbar-toggler {
     border: none;
+    padding: .25rem .75rem; /* Add some padding for better touch target */
 }
 
 .custom-navbar .nav-item {
-    padding: 0 10px;
-    /* Adjust spacing around nav items */
+    padding: 0 15px; /* Increase spacing for a more airy feel */
 }
 
-.custom-navbar .nav-dropdown {
-    position: static;
-    /* This might be needed to position the dropdown properly */
+.custom-navbar .nav-link {
+    font-size: 1.1rem; /* Match font size with secondary navbar for consistency */
+    font-weight: 500; /* Adjust weight for legibility */
+    padding: 0.5rem 2rem; /* Increase padding for more vertical space */
 }
 
-/* You may also want to style the dropdown menu, dropdown items, and active/hover states */
+/* Styles for hover effects */
+.custom-navbar .nav-link:hover,
+.custom-navbar .nav-link:focus {
+    color: #000; /* Slightly darker on hover for feedback */
+    text-decoration: none; /* No underline on hover */
+}
+
+@media (max-width: 768px) {
+    .custom-navbar .nav-link {
+        padding-left: 5px;
+    }
+}
+  
