@@ -79,23 +79,32 @@ function Auction() {
                   <div>Loading bids...</div>
                 ) : (
                   <Table striped bordered hover size="sm">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Amount (ETH)</th>
-                      <th>TX Hash</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {auctionData.bids && auctionData.bids.map((bid, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{bid.amount}</td>
-                        <td>hash</td>
+                    <thead>
+                      <tr>
+                        <th>Address</th>
+                        <th>Amount (ETH)</th>
+                        <th>Timestamp</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                    </thead>
+                    <tbody>
+                      {auctionData.bids && auctionData.bids.map((bid, index) => (
+                        <tr key={index}>
+                          <td>
+                            {formatAddress(bid.bidder)}
+                          </td>
+                          <td>
+                            {bid.amount}
+                          </td>
+                          <td>
+                            <a href={"https://testnet.blastscan.io/tx/" + bid.txHash}>
+                              {new Date(bid.timestamp).toLocaleDateString() + " " + new Date(bid.timestamp).toLocaleTimeString()}
+                            </a>
+                          </td>
+
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 )}
               </div>
             </Card.Body>
@@ -117,6 +126,10 @@ function ConnectWalletOrBid() {
   }
 
   return <ConnectWalletButton variant="primary" size="lg" text={"CONNECT WALLET TO BID"} />;
+}
+
+const formatAddress = (address) => {
+  return address.slice(0, 6) + "..." + address.slice(address.length - 4, address.length);
 }
 
 export default Auction;

@@ -2,6 +2,7 @@ const prisma = require('../../prismaClient');
 const ethers = require('ethers');
 const { createOrUpdateAuction } = require('./createOrUpdateAuction');
 const getAuctionData = require('../../utils/getAuctionData');
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
 /**
  * 
@@ -36,7 +37,12 @@ async function createBid(amount, bidder, girlfrenId, extended, event) {
             );
         }
 
-        // Now we've ensured Auction exists, proceed to store the bid
+        // Fetch the block timestamp using the transaction hash
+        const txReceipt = await provider.getTransactionReceipt(event.log.transactionHash);
+        const block = await provider.getBlock(txReceipt.blockNumber);
+        const timestamp = new Date(block.timestamp * 1000).toISOString();
+        
+        // Store the bid
         await prisma.bid.create({
             data: {
                 amount: amount,
@@ -44,7 +50,7 @@ async function createBid(amount, bidder, girlfrenId, extended, event) {
                 extended: extended,
                 auctionId: auction.id, // Token ID = Auction ID
                 transactionHash: event.log.transactionHash,
-                blockNumber: String(event.log.blockNumber)
+                time: timestamp
             },
         });
     } catch (error) {
