@@ -11,7 +11,7 @@ const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
  * @param {bigint} girlfrenId NFT ID being bid on
  * @param {boolean} extended Whether bid caused auction to be extended or not
  */
-async function createBid(amount, bidder, girlfrenId, extended, event) {
+async function createBid(amount, bidder, girlfrenId, extended, txHash) {
     // Convert types
     amount = amount.toString();
     girlfrenId = BigInt(girlfrenId).toString();
@@ -38,7 +38,7 @@ async function createBid(amount, bidder, girlfrenId, extended, event) {
         }
 
         // Fetch the block timestamp using the transaction hash
-        const txReceipt = await provider.getTransactionReceipt(event.log.transactionHash);
+        const txReceipt = await provider.getTransactionReceipt(txHash);
         const block = await provider.getBlock(txReceipt.blockNumber);
         const timestamp = new Date(block.timestamp * 1000).toISOString();
         
@@ -49,7 +49,7 @@ async function createBid(amount, bidder, girlfrenId, extended, event) {
                 bidder: bidder,
                 extended: extended,
                 auctionId: auction.id, // Token ID = Auction ID
-                transactionHash: event.log.transactionHash,
+                transactionHash: txHash,
                 time: timestamp
             },
         });
