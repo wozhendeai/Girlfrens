@@ -1,0 +1,30 @@
+/* About.css */
+.about-container {
+    color: #fff;
+    background: #000;
+    padding: 2rem;
+    min-height: 100vh; /* Full height of the page */
+  }
+  
+  .about-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .about-content-container h2 {
+    color: #e563cc; /* Pink color similar to the brand */
+    margin-bottom: 1rem;
+  }
+  
+  .about-content-container p {
+    margin-bottom: 1rem;
+  }
+  
+  .about-auction-cards-container {
+    margin-top: 2rem;
+  }
+  
+  /* Add responsive styles for your auction cards similar to the Home.css */
+  /* Ensure that you import AnimeGirlSVG and it returns an SVG or an image element */
+  

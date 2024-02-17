@@ -11,20 +11,20 @@ function AuctionCard({ tokenId }) {
 
     // Current auction end date [excluding possible time buffer]
     // TODO: Grab from contract
-    const [endDate, ] = useState("25 January 2024 | 2:00 PM EST");
+    const [endDate, ] = useState("25 January");
 
     return (
-        <Card className="auction-card my-3">
+        <Card className="past-auction-card" style={{ backgroundColor: "transparent", borderColor: "#5bc488" }}>
             <div className="auction-image-container">
                 <Card.Img variant="top" src={ImageOne} />
-                <span className="auction-badge">LIVE</span>
             </div>
             <Card.Body>
-                <Card.Title>Girlfren #{tokenId}</Card.Title>
+            <div className="bid-status-container">
                 <Card.Text>
-                     {endDate}
+                  <span style={{ color: "white" }}>STATUS:</span><span style={{color: "#bfbb32"}}> ENDED {endDate}</span>
                 </Card.Text>
-                <Button variant="outline-dark" style={{paddingLeft: "50px", paddingRight: "50px"}}>BID</Button>
+                <Button className="bid-now-button">0.2 ETH</Button>
+                </div>
             </Card.Body>
         </Card>
     );

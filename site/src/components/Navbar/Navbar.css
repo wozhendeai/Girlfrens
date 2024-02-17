@@ -1,44 +1,51 @@
-.custom-navbar {
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+.Navbar {
+  background-color: #000;
+  /* Assuming a black background from the image */
+  font-size: 1rem;
+  font-family: 'Shuriken';
+  color: #fff;
+  padding: 0px;
 }
 
-.custom-navbar .navbar-brand {
-    font-weight: 700; /* Slightly bolder for better visibility */
-    color: #333;
-    font-size: 1.75rem; /* Adjust size to your preference */
+.Navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 
-.custom-navbar .nav-link,
-.custom-navbar .navbar-toggler {
-    color: #555;
+.Navbar .navbar-brand {
+  font-size: 1.6rem; /* Larger size for the brand */
+  color: #e563cc;
+  font-weight: bold;
 }
 
-.custom-navbar .navbar-toggler {
-    border: none;
-    padding: .25rem .75rem; /* Add some padding for better touch target */
+/* Adjust the nav-link properties to align text to center of the brand */
+.Navbar .nav-link {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px; /* Adjust spacing around links */
+  padding: 5px 0; /* Padding to adjust vertical alignment */
+  display: flex; /* Use flex to align text properly */
+  align-items: center; /* Align text to the center vertically */
+  font-size: 1rem; /* Adjust to match the design */
 }
 
-.custom-navbar .nav-item {
-    padding: 0 15px; /* Increase spacing for a more airy feel */
+/* Center the nav vertically */
+.Navbar .navbar-nav {
+  align-items: center;
 }
 
-.custom-navbar .nav-link {
-    font-size: 1.1rem; /* Match font size with secondary navbar for consistency */
-    font-weight: 500; /* Adjust weight for legibility */
-    padding: 0.5rem 2rem; /* Increase padding for more vertical space */
+/* Icons */
+.icon-twitter,
+.icon-etherscan {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-left: 20px;
 }
 
-/* Styles for hover effects */
-.custom-navbar .nav-link:hover,
-.custom-navbar .nav-link:focus {
-    color: #000; /* Slightly darker on hover for feedback */
-    text-decoration: none; /* No underline on hover */
+.icons-container {
+  display: flex;
+  align-items: center;
 }
-
-@media (max-width: 768px) {
-    .custom-navbar .nav-link {
-        padding-left: 5px;
-    }
-}
-  

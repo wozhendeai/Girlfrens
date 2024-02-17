@@ -14,9 +14,11 @@ import Auction from './pages/Auction/Auction.jsx';
 import PageNotFound from './pages/PageNotFound/PageNotFound.jsx'
 import Manage from './pages/Manage/Manage.jsx';
 import Root from './components/Root/Root.jsx';
+import About from './pages/About/About.jsx';
 
 // CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "./main.css";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "manage",
         element: <Manage />
+      },
+      {
+        path: "about",
+        element: <About />
       }
     ]
   },
