@@ -11,27 +11,25 @@
     padding: 1rem;
 }
 
-    .current-auction-card,
-    .past-auction-card {
-        background-color: transparent;
-        border: 2px solid green;
-        border-radius: 0.5rem;
-    }
+.current-auction-card,
+.past-auction-card {
+    background-color: transparent;
+    border: 2px solid green;
+    border-radius: 0.5rem;
+}
 
-    .current-auction-card .card-img-top,
-    .past-auction-card .card-img-top {
-        padding: 0.5rem;
-        background-color: transparent;
-    }
+.current-auction-card .card-img-top,
+.past-auction-card .card-img-top {
+    padding: 0.5rem;
+    background-color: transparent;
+}
 
-    .current-auction-container .live-status {
-        color: green;
-    }
+.current-auction-container .live-status {
+    color: green;
+}
 
-    .auction-description {
-        margin-top: 1rem;
-        max-width: 18rem;
-        margin-left: auto;
+.auction-description {
+    margin-left: auto;
     margin-right: auto;
 }
 
