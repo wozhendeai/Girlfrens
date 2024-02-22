@@ -23,7 +23,6 @@ function App() {
   ];
 
   return (
-    <>
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={5} lg={4}>
@@ -80,8 +79,6 @@ function App() {
           </Grid>
         </Grid>
       </Container>
-    </>
-
   )
 }
 
