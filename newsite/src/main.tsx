@@ -5,6 +5,8 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Root from './components/Root/Root.tsx'
+import { createTheme } from '@mui/material';
+import Shuriken from './fonts/Shuriken.ttf';
 
 // Pages
 import Home from './pages/Home/Home.tsx';
@@ -13,6 +15,23 @@ import Manage from './pages/Manage/Manage.tsx';
 
 // CSS
 import './index.css'
+import { ThemeProvider } from '@emotion/react';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Shuriken',
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        @font-face {
+          font-family: 'Shuriken';
+          src: local('Shuriken'), local('Shuriken'), url(${Shuriken}) format('truetype');
+        }
+      `,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -38,6 +57,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 )
