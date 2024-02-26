@@ -17,6 +17,7 @@
 /* Adjust link styles as needed */
 .main-footer .nav-link {
     color: #000;
+    padding-left: 0px;
 }
 
 /* Ensure that the footer columns are aligned and spaced nicely */

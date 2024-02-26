@@ -42,7 +42,8 @@ async function checkMissedBids() {
 
         // If the bid does not exist, create it
         if (!existingBid) {
-          await createBid(amount, bidder, girlfrenId, extended);
+          const txHash = event.transactionHash
+          await createBid(amount, bidder, girlfrenId, extended, txHash);
           missedBids++;
         }
       }

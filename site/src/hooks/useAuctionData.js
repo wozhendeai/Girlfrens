@@ -28,17 +28,21 @@ const useAuctionData = () => {
         setInProgress(data.inProgress);
         return data.tokenId; // Return the tokenId for the next .then
       })
-      .then(tokenId => { // Use the returned tokenId here
+      // Use the returned tokenId here to fetch indexed bids for that tokenId
+      .then(tokenId => {
         if (!tokenId) return; // Check if tokenId is not null
         return fetchBids(tokenId); // Now fetch bids with the valid tokenId
       })
+      // Then we format bids data
       .then(bidsData => {
         if (bidsData && bidsData.bids) {
           setBids(
             bidsData.bids.map(data => {
               return {
                 amount: formatEther(data["amount"]),
-                bidder: data["bidder"]
+                bidder: data["bidder"],
+                txHash: data["transactionHash"], // hash: 
+                timestamp: data["time"]
               }
             })
           );

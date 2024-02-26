@@ -1,52 +1,69 @@
+/* Home.css */
+
 .home-container {
-    max-width: 80%;
-    margin: auto;
-    padding: 20px;
+    background: #000;
+    color: #fff;
+    padding: 2rem 0;
+    font-family: 'Shuriken';
 }
 
-.live-auction-header-container {
-    text-align: left;
-    padding-left: 20px;
-    /* Match the padding of the auction-list-container */
+.content-container {
+    padding: 1rem;
 }
 
-.auction-list-container {
+.current-auction-card,
+.past-auction-card {
+    background-color: transparent;
+    border: 2px solid green;
+    border-radius: 0.5rem;
+}
+
+.current-auction-card .card-img-top,
+.past-auction-card .card-img-top {
+    padding: 0.5rem;
+    background-color: transparent;
+}
+
+.current-auction-container .live-status {
+    color: green;
+}
+
+.auction-description {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.past-auction-card {
+    width: 100%;
+    max-width: 500px;
+    max-height: 500px;
+    margin-bottom: 1rem;
+}
+
+.bid-status-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    /* Center the items within the container */
-    gap: 20px;
-    /* Spacing between items */
+    align-items: baseline;
+    /* Align items on their baselines */
+    justify-content: space-between;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .home-container {
-        max-width: 100%;
-        margin: 0%;
-        padding: 0px;
-    }
-
-    .live-auction-header-container {
-        text-align: center;
-    }
-
-    .auction-card-container {
-        flex: 1 0 calc(50% - 40px);
-        /* 2 items per row on medium-sized screens */
-        max-width: calc(50% - 40px);
-    }
+.current-auction-card .card-text {
+    margin-bottom: 0;
+    /* Remove bottom margin from card text to align properly */
 }
 
+.bid-status-container .btn {
+    border-radius: 1rem;
+    border-color: #5bc488;
+    color: #5bc488;
+    background-color: transparent;
+}
+
+/* Responsive behavior */
 @media (max-width: 768px) {
-    .auction-card-container {
-        flex: 1 0 100%;
-        /* Full width on smaller screens */
-        max-width: 100%;
-    }
 
-    .live-auction-header-container {
-        padding-left: 0;
-        /* Remove padding on smaller screens */
+    .current-auction-container,
+    .past-auction-container {
+        margin-bottom: 1rem;
     }
 }

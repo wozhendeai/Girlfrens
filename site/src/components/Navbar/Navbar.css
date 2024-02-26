@@ -1,33 +1,51 @@
-.custom-navbar {
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+.Navbar {
+  background-color: #000;
+  /* Assuming a black background from the image */
+  font-size: 1rem;
+  font-family: 'Shuriken';
+  color: #fff;
+  padding: 0px;
 }
 
-.custom-navbar .navbar-brand {
-    font-weight: bold;
-    color: #333;
-    font-size: 2rem;
-    /* Set the color to match your brand */
+.Navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
 }
 
-.custom-navbar .nav-link,
-.custom-navbar .navbar-toggler {
-    color: #555;
-    /* Adjust the color for the links and toggler */
+.Navbar .navbar-brand {
+  font-size: 1.6rem; /* Larger size for the brand */
+  color: #e563cc;
+  font-weight: bold;
 }
 
-.custom-navbar .navbar-toggler {
-    border: none;
+/* Adjust the nav-link properties to align text to center of the brand */
+.Navbar .nav-link {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px; /* Adjust spacing around links */
+  padding: 5px 0; /* Padding to adjust vertical alignment */
+  display: flex; /* Use flex to align text properly */
+  align-items: center; /* Align text to the center vertically */
+  font-size: 1rem; /* Adjust to match the design */
 }
 
-.custom-navbar .nav-item {
-    padding: 0 10px;
-    /* Adjust spacing around nav items */
+/* Center the nav vertically */
+.Navbar .navbar-nav {
+  align-items: center;
 }
 
-.custom-navbar .nav-dropdown {
-    position: static;
-    /* This might be needed to position the dropdown properly */
+/* Icons */
+.icon-twitter,
+.icon-etherscan {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-left: 20px;
 }
 
-/* You may also want to style the dropdown menu, dropdown items, and active/hover states */
+.icons-container {
+  display: flex;
+  align-items: center;
+}
